@@ -44,7 +44,6 @@
 #include "Lawn/Widget/SeedChooserScreen.h"
 #include "Lawn/Widget/ChallengePagesDialog.h"
 #include "SexyAppFramework/WidgetManager.h"
-#include "SexyAppFramework/CursorWidget.h"
 #include "SexyAppFramework/ResourceManager.h"
 #include "Lawn/Achievements.h"
 
@@ -53,16 +52,16 @@
 #include "SexyAppFramework/BassMusicInterface.h"
 #include "SexyAppFramework/Dialog.h"
 #include "SexyAppFramework/resource.h"
+#include "SexyAppFramework/Debug.h"
+#include "Sexy.TodLib/Definition.h"
 
 bool gIsPartnerBuild = false;
 bool gSlowMo = false;  
 bool gFastMo = false;  
 LawnApp* gLawnApp = nullptr;  
 int gSlowMoCounter = 0;  
-bool isFastMode = false;  //the ingame fast mode
 
-
-const char* CLIENT_ID = "1243252904878542908";
+const char* CLIENT_ID = "1261368391885787348";
 
 bool LawnGetCloseRequest()
 {
@@ -89,7 +88,6 @@ LawnApp::LawnApp()
 	mQuickPlayScreen = nullptr;
 	mMiniCreditsScreen = nullptr;
 	mAchievementScreen = nullptr;
-	mCursor = nullptr;
 	mSoundSystem = nullptr;
 	mKonamiCheck = nullptr;
 	mMustacheCheck = nullptr;
@@ -125,18 +123,10 @@ LawnApp::LawnApp()
 	mMuteSoundsForCutscene = false;
 	mAutoStartLoadingThread = false;
 	mDebugKeysEnabled = false;
-	isFastMode = false;
-	mProdName = "PlantsVsZombies";
-	mVersion = "v2.1";
-	mReconVersion = "PvZ: QoTL " + mVersion;
-	std::string aTitleName = "Plants vs. Zombies: QoTL";
-	aTitleName += " " + mVersion;
-#ifdef _DEBUG
-	aTitleName += " DEBUG";
-#endif
-
-
-	mTitle = StringToSexyStringFast(aTitleName);
+	mIsFastMode = false;
+	mVersion = "0.1";
+	mReconVersion = "PvZ: CE " + mVersion;
+	mTitle = _S("Plants vs. Zombis: Complete edition " + mVersion);
 	mCustomCursorsEnabled = false;
 	mPlayerInfo = nullptr;
 	mLastLevelStats = new LevelStats();
@@ -161,8 +151,7 @@ LawnApp::LawnApp()
 	mCrazyDaveMessageIndex = -1;
 	mBigArrowCursor = LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDC_CURSOR1));
 	mDRM = nullptr;
-	mPlayedQuickplay = false;
-	StartDiscord();
+	mPlayingQuickplay = false;
 }
 
 LawnApp::~LawnApp()
@@ -272,11 +261,6 @@ LawnApp::~LawnApp()
 	{
 		mWidgetManager->RemoveWidget(mQuickPlayScreen);
 		delete mQuickPlayScreen;
-	}
-	if (mCursor)
-	{
-		mWidgetManager->RemoveWidget(mCursor);
-		delete mCursor;
 	}
 
 	delete mProfileMgr;
@@ -449,7 +433,7 @@ void LawnApp::PreNewGame(GameMode theGameMode, bool theLookForSavedGame)
 
 void LawnApp::StartQuickPlay()
 {
-	mPlayedQuickplay = true;
+	mPlayingQuickplay = true;
 	mGameMode = GameMode::GAMEMODE_ADVENTURE;
 	NewGame();
 }
@@ -514,7 +498,7 @@ void LawnApp::NewGame()
 void LawnApp::ShowGameSelector()
 {
 	KillBoard();
-	mPlayedQuickplay = false;
+	mPlayingQuickplay = false;
 	//UpdateRegisterInfo();
 	if (mGameSelector)
 	{
@@ -731,7 +715,7 @@ void LawnApp::DoBackToMain(bool hasSound)
 	WriteCurrentUserConfig();
 	KillNewOptionsDialog();
 	KillBoard();
-	mPlayedQuickplay = false;
+	mPlayingQuickplay = false;
 	ShowGameSelector();
 	if (hasSound)
 		PlaySample(Sexy::SOUND_BUTTONCLICK);
@@ -742,8 +726,8 @@ void LawnApp::DoConfirmBackToMain()
 	LawnDialog* aDialog = (LawnDialog*)DoDialog(
 		Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, 
 		true, 
-		_S("Leave Game?"/*"[LEAVE_GAME]"*/),
-		_S("Do you want to return\nto the main menu?\n\nYour game will be saved."/*"[LEAVE_GAME_HEADER]"*/), 
+		_S("[LEAVE_GAME]"),
+		_S("[LEAVE_GAME_HEADER]"), 
 		"", 
 		Dialog::BUTTONS_YES_NO
 	);
@@ -753,21 +737,21 @@ void LawnApp::DoConfirmBackToMain()
 	//aDialog->CalcSize(0, 0);
 }
 
-void LawnApp::DoNewOptions(bool theFromGameSelector, int x, int y)
+void LawnApp::DoNewOptions(bool theFromGameSelector, int theX, int theY)
 {
 	NewOptionsDialog* aDialog = new NewOptionsDialog(this, theFromGameSelector, false);
 	CenterDialog(aDialog, IMAGE_OPTIONS_MENUBACK->mWidth, IMAGE_OPTIONS_MENUBACK->mHeight);
-	if (x != -1 && y != -1)
-		aDialog->Resize(x, y, aDialog->mWidth, aDialog->mHeight);
+	if (theX != -1 && theY != -1)
+		aDialog->Resize(theX, theY, aDialog->mWidth, aDialog->mHeight);
 	AddDialog(Dialogs::DIALOG_NEWOPTIONS, aDialog);
 	mWidgetManager->SetFocus(aDialog);
 }
 
-void LawnApp::DoAdvancedOptions(bool theFromGameSelector, int x, int y)
+void LawnApp::DoAdvancedOptions(bool theFromGameSelector, int theX, int theY)
 {
 	NewOptionsDialog* aDialog = new NewOptionsDialog(this, theFromGameSelector, true);
 	CenterDialog(aDialog, IMAGE_OPTIONS_MENUBACK->mWidth, IMAGE_OPTIONS_MENUBACK->mHeight);
-	aDialog->Resize(x, y, aDialog->mWidth, aDialog->mHeight);
+	aDialog->Resize(theX, theY, aDialog->mWidth, aDialog->mHeight);
 	AddDialog(Dialogs::DIALOG_NEWOPTIONS, aDialog);
 	mWidgetManager->SetFocus(aDialog);
 }
@@ -810,9 +794,9 @@ void LawnApp::DoPauseDialog()
 	LawnDialog* aDialog = (LawnDialog*)DoDialog(
 		Dialogs::DIALOG_PAUSED,
 		true,
-		_S("GAME PAUSED"/*"[GAME_PAUSED]"*/),
-		_S("Click to resume game"), 
-		_S("Resume Game"/*"[RESUME_GAME]"*/),
+		_S("[GAME_PAUSED]"),
+		_S("[GAME_PAUSED_HEADER]"), 
+		_S("[RESUME_GAME]"),
 		Dialog::BUTTONS_FOOTER
 	);
 
@@ -849,6 +833,7 @@ Dialog* LawnApp::DoDialog(int theDialogId, bool isModal, const SexyString& theDi
 	SexyString aHeader = TodStringTranslate(theDialogHeader);
 	SexyString aLines = TodStringTranslate(theDialogLines);
 	SexyString aFooter = TodStringTranslate(theDialogFooter);
+
 	Dialog* aDialog = SexyAppBase::DoDialog(theDialogId, isModal, aHeader, aLines, aFooter, theButtonMode);
 	if (mWidgetManager->mFocusWidget == nullptr)
 	{
@@ -921,25 +906,14 @@ void LawnApp::FinishCreateUserDialog(bool isYes)
 
 	SexyString aName = aNewUserDialog->GetName();
 
-	if (isYes && aName.empty())
+	if ((isYes && aName.empty()) || (mPlayerInfo == nullptr && (!isYes || aName.empty())))
 	{
 		DoDialog(
 			Dialogs::DIALOG_CREATEUSERERROR,
 			true,
-			_S("Enter Your Name"),
-			_S("Please enter your name to create a new user profile for storing high score data and game progress"),
-			_S("OK"),
-			Dialog::BUTTONS_FOOTER
-		);
-	}
-	else if (mPlayerInfo == nullptr && (!isYes || aName.empty()))
-	{
-		DoDialog(
-			Dialogs::DIALOG_CREATEUSERERROR,
-			true,
-			_S("Enter Your Name"/*"[ENTER_YOUR_NAME]"*/),
-			_S("Please enter your name to create a new user profile for storing high score data and game progress"/*"[ENTER_NEW_USER]"*/),
-			_S("OK"/*"[DIALOG_BUTTON_OK]"*/),
+			_S("[ENTER_YOUR_NAME]"),
+			_S("[ENTER_NEW_USER]"),
+			_S("[DIALOG_BUTTON_OK]"),
 			Dialog::BUTTONS_FOOTER
 		);
 	}
@@ -955,9 +929,9 @@ void LawnApp::FinishCreateUserDialog(bool isYes)
 			DoDialog(
 				Dialogs::DIALOG_CREATEUSERERROR,
 				true,
-				_S("Name Conflict"/*"[NAME_CONFLICT]"*/),
-				_S("The name you entered is already being used.  Please enter a unique player name"/*"[ENTER_UNIQUE_PLAYER_NAME]"*/),
-				_S("OK"/*"[DIALOG_BUTTON_OK]"*/),
+				_S("[NAME_CONFLICT]"),
+				_S("[ENTER_UNIQUE_PLAYER_NAME]"),
+				_S("[DIALOG_BUTTON_OK]"),
 				Dialog::BUTTONS_FOOTER
 			);
 		}
@@ -982,11 +956,10 @@ void LawnApp::DoConfirmDeleteUserDialog(const SexyString& theName)
 {
 	KillDialog(Dialogs::DIALOG_CONFIRMDELETEUSER);
 	DoDialog(
-		Dialogs::DIALOG_CONFIRMDELETEUSER, 
-		true, 
-		_S("Are You Sure"/*"[ARE_YOU_SURE]"*/), 
-		// StrFormat(TodStringTranslate(_S("[DELETE_USER_WARNING]")).c_str(), StringToSexyStringFast(theName))
-		StrFormat(_S("This will permanently remove '%s' from the player roster!"), theName.c_str()),
+		Dialogs::DIALOG_CONFIRMDELETEUSER,
+		true,
+		_S("[ARE_YOU_SURE]"),
+		TodReplaceString(_S("[DELETE_USER_WARNING]"), _S("{NAME}"), theName),
 		_S(""), 
 		Dialog::BUTTONS_YES_NO
 	);
@@ -1070,9 +1043,9 @@ void LawnApp::FinishRenameUserDialog(bool isYes)
 		DoDialog(
 			Dialogs::DIALOG_RENAMEUSERERROR,
 			true,
-			_S("Name Conflict"/*"[NAME_CONFLICT]"*/),
-			_S("The name you entered is already being used.  Please enter a unique player name"/*"[ENTER_UNIQUE_PLAYER_NAME]"*/),
-			_S("OK"/*"[DIALOG_BUTTON_OK]"*/),
+			_S("[NAME_CONFLICT]"),
+			_S("[ENTER_UNIQUE_PLAYER_NAME]"),
+			_S("[DIALOG_BUTTON_OK]"),
 			Dialog::BUTTONS_FOOTER
 		);
 		return;
@@ -1192,26 +1165,31 @@ bool LawnApp::KillNewOptionsDialog()
 	NewOptionsDialog* aNewOptionsDialog = (NewOptionsDialog*)GetDialog(Dialogs::DIALOG_NEWOPTIONS);
 	if (aNewOptionsDialog == nullptr)
 		return false;
+
 	bool want3D = aNewOptionsDialog->mRealHardwareAccelerationCheckbox->IsChecked();
+	bool wantWindowed = !aNewOptionsDialog->mFullscreenCheckbox->IsChecked();
 	if (aNewOptionsDialog->mAdvancedMode)
 	{
-		mDiscordPresence = aNewOptionsDialog->mDiscordBox->IsChecked();
-		mBankKeybinds = aNewOptionsDialog->mBankKeybindsBox->IsChecked();
-		mZeroNineBankFormat = aNewOptionsDialog->m09FormatBox->IsChecked();
+		mDiscordPresence = aNewOptionsDialog->mDiscordCheckbox->IsChecked();
+		mBankKeybinds = aNewOptionsDialog->mBankKeybindsCheckbox->IsChecked();
+		mZeroNineBankFormat = aNewOptionsDialog->m09FormatCheckbox->IsChecked();
 		mSpeedModifier = stoi(aNewOptionsDialog->mSpeedEditWidget->mString.c_str());
-		mAutoCollectSuns = aNewOptionsDialog->mAutoCollectSunsBox->IsChecked();
-		mAutoCollectCoins = aNewOptionsDialog->mAutoCollectCoinsBox->IsChecked();
-		mZombieHealthbars = aNewOptionsDialog->mZombieHealthbarsBox->IsChecked();
-		mPlantHealthbars = aNewOptionsDialog->mPlantHealthbarsBox->IsChecked();
+		mAutoCollectSuns = aNewOptionsDialog->mAutoCollectSunsCheckbox->IsChecked();
+		mAutoCollectCoins = aNewOptionsDialog->mAutoCollectCoinsCheckbox->IsChecked();
+		mZombieHealthbars = aNewOptionsDialog->mZombieHealthbarsCheckbox->IsChecked();
+		mPlantHealthbars = aNewOptionsDialog->mPlantHealthbarsCheckbox->IsChecked();
 		ToggleDebugMode();
-		bool wantWindowed = !aNewOptionsDialog->mFullscreenCheckbox->IsChecked();
 		SwitchScreenMode(wantWindowed, want3D, false);
+		bool aCustomCursor = aNewOptionsDialog->mCustomCursorCheckbox->IsChecked();
+		if (mCustomCursor != aCustomCursor)
+		{
+			mCustomCursor = aCustomCursor;
+			EnforceCursor();
+		}
 	}
 	else
 	{
-		bool wantWindowed = !aNewOptionsDialog->mFullscreenCheckbox->IsChecked();
-		bool wantFake3D = aNewOptionsDialog->mHardwareAccelerationCheckbox->IsChecked();
-		mIs3dAccel = wantFake3D;
+		mIs3dAccel = aNewOptionsDialog->mHardwareAccelerationCheckbox->IsChecked();
 		SwitchScreenMode(wantWindowed, want3D, false);
 	}
 
@@ -1338,23 +1316,33 @@ void LawnApp::Init()
 	TodLog("3d supported: %u", is3dSupported);
 #endif
 
+	StartDiscord();
 	mStartTime = time(NULL);
-	mDetails = "Starting the Game";
+	mDetails = _S("[DISCORD_STARTING]");
 	UpdateDiscordState();
 	
-	if (!mResourceManager->ParseResourcesFile("properties\\resources.xml"))
+	if (!mResourceManager->ParseResourcesFile(mResourcesPath))
 	{
 		ShowResourceError(true);
 		return;
 	}
-
+	int aIndex = 0;
+	for (std::map<std::string, ResourceManager::ResMap>::iterator aIt = mResourceManager->mResourcePackImageMaps.begin(); aIt != mResourceManager->mResourcePackImageMaps.end(); ++aIt, ++aIndex)
+	{
+		if (aIt->first == mResourcePack)
+		{
+			mResourcePackIndex = aIndex;
+			break;
+		}
+	}
+	LoadCurrentResourcePack();
 	if (!TodLoadResources("Init"))
 	{
 		return;
 	}
 
-	PerfTimer mTimer;
-	mTimer.Start();
+	PerfTimer aTimer;
+	aTimer.Start();
 
 	mProfileMgr->Load();
 
@@ -1378,17 +1366,12 @@ void LawnApp::Init()
 	mWidgetManager->SetFocus(mTitleScreen);
 	mAchievements = new Achievements(this);
 	mAchievements->InitAchievement();
-	if (HAS_CUSTOM_CURSOR)
-	{
-		mCursor = new CursorWidget(this);
-		mWidgetManager->AddWidget(mCursor);
-		mWidgetManager->BringToFront(mCursor);
-	}
+
 #ifdef _DEBUG
-	int aDuration = mTimer.GetDuration();
+	int aDuration = aTimer.GetDuration();
 	TodTrace("loading: 'profiles' %d ms", aDuration);
 #endif
-	mTimer.Start();
+	aTimer.Start();
 
 	mMusic = new Music();
 	mSoundSystem = new TodFoley();
@@ -1417,20 +1400,35 @@ void LawnApp::Init()
 	mSukhbirCheck = new TypingCheck("sukhbir");
 
 #ifdef _DEBUG
-	aDuration = mTimer.GetDuration();
+	aDuration = aTimer.GetDuration();
 	TodTrace("loading: 'system' %d ms", aDuration);
 #endif
-	mTimer.Start();
+	aTimer.Start();
 
 	ReanimatorLoadDefinitions(gLawnReanimationArray, ReanimationType::NUM_REANIMS);
+
+	TrailLoadDefinitions(gLawnTrailArray, LENGTH(gLawnTrailArray));
+	aDuration = aTimer.GetDuration();
+	TodTrace("loading '%s' %d ms", "trail", aDuration);
+	aTimer.Start();
+	TodHesitationTrace("trail");
+
+	TodParticleLoadDefinitions(gLawnParticleArray, LENGTH(gLawnParticleArray));
+	aDuration = aTimer.GetDuration();
+	TodTrace("loading '%s' %d ms", "particle", aDuration);
+	aTimer.Start();
+	TodHesitationTrace("particle");
+
+	DefinitionLoadResourcePackImages();
+
 	ReanimatorEnsureDefinitionLoaded(ReanimationType::REANIM_LOADBAR_SPROUT, true);
 	ReanimatorEnsureDefinitionLoaded(ReanimationType::REANIM_LOADBAR_ZOMBIEHEAD, true);
 
 #ifdef _DEBUG
-	aDuration = mTimer.GetDuration();
+	aDuration = aTimer.GetDuration();
 	TodTrace("loading: 'loaderbar' %d ms", aDuration);
 #endif
-	mTimer.Start();
+	aTimer.Start();
 
 
 	if ((!Is3DAccelerationSupported() || !Is3DAccelerationRecommended()) && mIs3dAccel)
@@ -1521,18 +1519,14 @@ bool LawnApp::UpdatePlayerProfileForFinishingLevel()
 		}
 
 		bool isChallengeLevel = IsWallnutBowlingLevel() || IsWhackAZombieLevel() || IsLittleTroubleLevel() || IsBungeeBlitzLevel() || IsStormyNightLevel() || mBoard->HasConveyorBeltSeedBank();
-		if (mBoard->mBackground == BACKGROUND_3_POOL && !mBoard->mPeashootersUsed && !isChallengeLevel) {
+		if (mBoard->mBackground == BACKGROUND_3_POOL && !mBoard->mPeashootersUsed && !isChallengeLevel) 
 			GetAchievement(ACHIEVEMENT_DONT_PEA_IN_POOL);
-		}
-		if (mBoard->StageHasRoof() && !mBoard->mCatapultsUsed && !isChallengeLevel) {
+		if (mBoard->StageHasRoof() && !mBoard->mCatapultsUsed && !isChallengeLevel) 
 			GetAchievement(ACHIEVEMENT_GROUNDED);
-		}
-		if (mBoard->StageIsNight() && !mBoard->mMushroomsUsed && !isChallengeLevel) {
+		if (mBoard->StageIsNight() && !mBoard->mMushroomsUsed && !isChallengeLevel) 
 			GetAchievement(ACHIEVEMENT_NO_FUNGUS_AMONG_US);
-		}
-		if (mBoard->mBackground == BACKGROUND_1_DAY && mBoard->mMushroomsNCoffeeUsed && !mBoard->mUsedNonMushrooms && !isChallengeLevel) {
+		if (mBoard->mBackground == BACKGROUND_1_DAY && mBoard->mMushroomsNCoffeeUsed && !mBoard->mUsedNonMushrooms && !isChallengeLevel) 
 			GetAchievement(ACHIEVEMENT_GOOD_MORNING);
-		}
 	}
 	else if (IsSurvivalMode())
 	{
@@ -1601,35 +1595,24 @@ void LawnApp::CheckForGameEnd()
 {
 	if (mBoard == nullptr || !mBoard->mLevelComplete)
 		return;
-	isFastMode = false;
+	mIsFastMode = false;
 
-	if (mPlayedQuickplay)
+	if (mPlayingQuickplay)
 	{
-		KillBoard();
 		ShowGameSelector();
-		int result = Dialog::ID_NO;
-		if (mQuickLevel != FINAL_LEVEL)
-		{
-			LawnDialog* dialog = (LawnDialog*)DoDialog(DIALOG_MESSAGE, true, "Continue?", "Would you like to go to the next level in Quick Play?", "", Dialog::BUTTONS_YES_NO);
-			result = dialog->WaitForResult(true);
-		}
-
-		if (result == Dialog::ID_YES)
-		{
-			mQuickLevel++;
-			KillGameSelector();
-			StartQuickPlay();
-		}
 		return;
 	}
 
+	if (EarnedGoldTrophy())
+		GetAchievement(ACHIEVEMENT_NOBEL_PEAS_PRIZE);
+
 	bool aUnlockedNewChallenge = UpdatePlayerProfileForFinishingLevel();
 
-	bool forceAchievements = false;
+	bool aForceAchievements = false;
 	for (int aAchivement = 0; aAchivement < NUM_ACHIEVEMENTS; aAchivement++)
 	{
 		if (mPlayerInfo->mEarnedAchievements[aAchivement] && !mPlayerInfo->mShownedAchievements[aAchivement] && mAchievements->ReturnShowInAwards(aAchivement))
-			forceAchievements = true;
+			aForceAchievements = true;
 	}
 
 	if (IsAdventureMode())
@@ -1675,7 +1658,7 @@ void LawnApp::CheckForGameEnd()
 			}
 			else
 			{
-				if (!forceAchievements)
+				if (!aForceAchievements)
 					ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_SURVIVAL);
 				else
 					ShowAwardScreen(AwardType::AWARD_ACHIEVEMENTONLY, true);
@@ -1698,7 +1681,7 @@ void LawnApp::CheckForGameEnd()
 		}
 		else
 		{
-			if (!forceAchievements)
+			if (!aForceAchievements)
 				ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_PUZZLE);
 			else
 				ShowAwardScreen(AwardType::AWARD_ACHIEVEMENTONLY, true);
@@ -1714,7 +1697,7 @@ void LawnApp::CheckForGameEnd()
 		}
 		else
 		{
-			if (!forceAchievements)
+			if (!aForceAchievements)
 				ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_CHALLENGE);
 			else
 				ShowAwardScreen(AwardType::AWARD_ACHIEVEMENTONLY, true);
@@ -1803,7 +1786,7 @@ void LawnApp::UpdateFrames()
 	{
 		aUpdateCount = 20;
 	}
-	else if (isFastMode)
+	else if (mIsFastMode)
 	{
 		aUpdateCount = mSpeedModifier;
 	}
@@ -1826,12 +1809,6 @@ void LawnApp::UpdateFrames()
 		}
 
 		CheckForGameEnd();
-
-		if (mCursor && HAS_CUSTOM_CURSOR)
-		{
-			mCursor->SetImage(IMAGE_MOUSE_CURSOR);
-			mWidgetManager->BringToFront(mCursor);
-		}
 	}
 
 	static time_t lastUpdateTime = time(NULL);
@@ -1846,10 +1823,13 @@ void LawnApp::UpdateFrames()
 		{
 			DiscordRichPresence discordPresence;
 			memset(&discordPresence, 0, sizeof(discordPresence));
-			discordPresence.state = mState.c_str();
-			discordPresence.details = mDetails.c_str();
+			SexyString aState = TodStringTranslate(mState);
+			discordPresence.state = aState.c_str();
+			SexyString aDetails = TodStringTranslate(mDetails);
+			discordPresence.details = aDetails.c_str();
+			SexyString aLargeImageText = _S(mVersion + " - " + TodStringTranslate("[LANGUAGE_NAME]"));
+			discordPresence.largeImageText = aLargeImageText.c_str();
 			discordPresence.largeImageKey = "logo";
-			discordPresence.largeImageText = mVersion.c_str();
 			discordPresence.startTimestamp = mStartTime;
 			Discord_UpdatePresence(&discordPresence);
 		}
@@ -1890,6 +1870,8 @@ void LawnApp::LoadGroup(const char* theGroupName, int theGroupAveMsToLoad)
 		ShowResourceError();
 		mLoadingFailed = true;
 	}
+	else
+		mResourceManager->mLoadedGroups.insert(theGroupName);
 
 	int aTotalGroupWeight = mResourceManager->GetNumResources(theGroupName) * theGroupAveMsToLoad;
 	int aGroupTime = max(aTimer.GetDuration(), 0);
@@ -1901,7 +1883,22 @@ void LawnApp::LoadingThreadProc()
 	if (!TodLoadResources("LoaderBar"))
 		return;
 
-	TodStringListLoad("Properties\\LawnStrings.txt");
+	ReloadLanguages();
+	int aIndex = 0;
+	for (std::map<std::string, StringWStringMap>::iterator aIt = mLanguages.begin(); aIt != mLanguages.end(); ++aIt, ++aIndex) 
+	{
+		if (aIt->first == mLanguage) 
+		{
+			mLanguageIndex = aIndex;
+			break;
+		}
+	}
+	if (mLanguageIndex == -1)
+	{
+		mLanguage = mLanguages.begin()->first;
+		mLanguageIndex = 0;
+	}
+	LoadCurrentLanguage();
 
 	if (mTitleScreen)
 	{
@@ -1947,15 +1944,6 @@ void LawnApp::LoadingThreadProc()
 	TodTrace("loading '%s' %d ms", "stuff", (int)aTimer.GetDuration());
 	aTimer.Start();
 
-	TrailLoadDefinitions(gLawnTrailArray, LENGTH(gLawnTrailArray));
-	TodTrace("loading '%s' %d ms", "trail", (int)aTimer.GetDuration());
-	aTimer.Start();
-	TodHesitationTrace("trail");
-	
-	TodParticleLoadDefinitions(gLawnParticleArray, LENGTH(gLawnParticleArray));
-	aDuration = max(aTimer.GetDuration(), 0);
-	aTimer.Start();
-
 	PreloadForUser();
 	if (mLoadingFailed || mShutdown || mCloseRequest)
 		return;
@@ -1989,9 +1977,6 @@ void LawnApp::LoadingCompleted()
 	mWidgetManager->RemoveWidget(mTitleScreen);
 	SafeDeleteWidget(mTitleScreen);
 	mTitleScreen = nullptr;
-
-	mResourceManager->DeleteImage("IMAGE_TITLESCREEN");
-
 	ShowGameSelector();
 }
 
@@ -2243,9 +2228,7 @@ bool LawnApp::IsSurvivalMode()
 
 bool LawnApp::IsPuzzleMode()
 {
-	return
-		(mGameMode >= GameMode::GAMEMODE_SCARY_POTTER_1 && mGameMode <= GameMode::GAMEMODE_SCARY_POTTER_ENDLESS) ||
-		(mGameMode >= GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1 && mGameMode <= GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS);
+	return mGameMode >= GameMode::GAMEMODE_SCARY_POTTER_1 && mGameMode <= GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS;
 }
 
 bool LawnApp::IsChallengeMode()
@@ -2295,13 +2278,9 @@ bool LawnApp::IsContinuousChallenge()
 
 bool LawnApp::IsArtChallenge()
 {
-	if (mBoard == nullptr)
-		return false;
-
-	return 
-		mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT || 
-		mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_SUNFLOWER || 
-		mGameMode == GameMode::GAMEMODE_CHALLENGE_SEEING_STARS;
+	return mBoard && (mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT ||
+		mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_SUNFLOWER ||
+		mGameMode == GameMode::GAMEMODE_CHALLENGE_SEEING_STARS);
 }
 
 bool LawnApp::IsSquirrelLevel()
@@ -2311,20 +2290,7 @@ bool LawnApp::IsSquirrelLevel()
 
 bool LawnApp::IsIZombieLevel()
 {
-	if (mBoard == nullptr)
-		return false;
-
-	return
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_2 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_3 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_4 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_5 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_6 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_7 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_8 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_9 ||
-		mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS;
+	return mBoard && mGameMode >= GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1 && mGameMode <= GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS;
 }
 
 bool LawnApp::IsShovelLevel()
@@ -2340,15 +2306,12 @@ bool LawnApp::IsWallnutBowlingLevel()
 	if (mGameMode == GameMode::GAMEMODE_CHALLENGE_WALLNUT_BOWLING || mGameMode == GameMode::GAMEMODE_CHALLENGE_WALLNUT_BOWLING_2)
 		return true;
 
-	if (mPlayedQuickplay)
-		return mQuickLevel == 5;
-
-	return IsAdventureMode() && mPlayerInfo->mLevel == 5;
+	return IsAdventureMode() && mBoard->mLevel == 5;
 }
 
 bool LawnApp::IsSlotMachineLevel()
 {
-	return (mBoard && mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE);
+	return mBoard && mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE;
 }
 
 bool LawnApp::IsWhackAZombieLevel()
@@ -2359,10 +2322,7 @@ bool LawnApp::IsWhackAZombieLevel()
 	if (mGameMode == GameMode::GAMEMODE_CHALLENGE_WHACK_A_ZOMBIE)
 		return true;
 
-	if (mPlayedQuickplay)
-		return mQuickLevel == 15;
-
-	return IsAdventureMode() && mPlayerInfo->mLevel == 15;
+	return IsAdventureMode() && mBoard->mLevel == 15;
 }
 
 bool LawnApp::IsLittleTroubleLevel()
@@ -2373,20 +2333,18 @@ bool LawnApp::IsLittleTroubleLevel()
 	if (mGameMode == GameMode::GAMEMODE_CHALLENGE_LITTLE_TROUBLE)
 		return true;
 	
-	if (mPlayedQuickplay)
-		return mQuickLevel == 25;
-
-	return IsAdventureMode() && mPlayerInfo->mLevel == 25;
+	return IsAdventureMode() && mBoard->mLevel == 25;
 }
 
 bool LawnApp::IsScaryPotterLevel()
 {
+	if (mBoard == nullptr)
+		return false;
+
 	if (mGameMode >= GameMode::GAMEMODE_SCARY_POTTER_1 && mGameMode <= GameMode::GAMEMODE_SCARY_POTTER_ENDLESS)
 		return true;
-	if (mPlayedQuickplay)
-		return mQuickLevel == 35;
 
-	return IsAdventureMode() && mPlayerInfo->mLevel == 35;
+	return IsAdventureMode() && mBoard->mLevel == 35;
 }
 
 bool LawnApp::IsStormyNightLevel()
@@ -2397,10 +2355,7 @@ bool LawnApp::IsStormyNightLevel()
 	if (mGameMode == GameMode::GAMEMODE_CHALLENGE_STORMY_NIGHT)
 		return true;
 
-	if (mPlayedQuickplay)
-		return mQuickLevel == 40;
-
-	return IsAdventureMode() && mPlayerInfo->mLevel == 40;
+	return IsAdventureMode() && mBoard->mLevel == 40;
 }
 
 bool LawnApp::IsBungeeBlitzLevel()
@@ -2411,10 +2366,7 @@ bool LawnApp::IsBungeeBlitzLevel()
 	if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BUNGEE_BLITZ)
 		return true;
 
-	if (mPlayedQuickplay)
-		return mQuickLevel == 45;
-
-	return IsAdventureMode() && mPlayerInfo->mLevel == 45;
+	return IsAdventureMode() && mBoard->mLevel == 45;
 }
 
 bool LawnApp::IsMiniBossLevel()
@@ -2425,14 +2377,7 @@ bool LawnApp::IsMiniBossLevel()
 	if (!IsAdventureMode())
 		return false;
 
-	if (mPlayedQuickplay)
-	{
-		return mQuickLevel == 10 || mQuickLevel == 20 || mQuickLevel == 30;
-	}
-	else
-	{
-		return mPlayerInfo->mLevel == 10 || mPlayerInfo->mLevel == 20 || mPlayerInfo->mLevel == 30;
-	}
+	return IsAdventureMode() && (mBoard->mLevel == 10 || mBoard->mLevel == 20 || mBoard->mLevel == 30);
 }
 
 bool LawnApp::IsFinalBossLevel()
@@ -2443,10 +2388,7 @@ bool LawnApp::IsFinalBossLevel()
 	if (mGameMode == GameMode::GAMEMODE_CHALLENGE_FINAL_BOSS)
 		return true;
 
-	if (mPlayedQuickplay)
-		return mQuickLevel == 50;
-
-	return IsAdventureMode() && mPlayerInfo->mLevel == 50;
+	return IsAdventureMode() && mBoard->mLevel == 50;
 }
 
 bool LawnApp::IsChallengeWithoutSeedBank()
@@ -2469,16 +2411,10 @@ bool LawnApp::CanShowSeedBankAfterSun()
 
 bool LawnApp::IsNight()
 {
-	if (IsIceDemo() || mPlayerInfo == nullptr)
+	if (IsIceDemo() || mBoard == nullptr)
 		return false;
-	if (mPlayedQuickplay)
-	{
-		return (mQuickLevel >= 11 && mQuickLevel <= 20) || (mQuickLevel >= 31 && mQuickLevel <= 40) || mQuickLevel == 50;
-	}
-	else
-	{
-		return (mPlayerInfo->mLevel >= 11 && mPlayerInfo->mLevel <= 20) || (mPlayerInfo->mLevel >= 31 && mPlayerInfo->mLevel <= 40) || mPlayerInfo->mLevel == 50;
-	}
+	
+	return (mBoard->mLevel >= 11 && mBoard->mLevel <= 20) || (mBoard->mLevel >= 31 && mBoard->mLevel <= 40) || mBoard->mLevel == 50;
 }
 
 int LawnApp::GetCurrentChallengeIndex()
@@ -2798,7 +2734,7 @@ void LawnApp::CrazyDaveEnter()
 	TOD_ASSERT(mCrazyDaveState == CRAZY_DAVE_OFF);
 	TOD_ASSERT(!ReanimationTryToGet(mCrazyDaveReanimID));
 
-	Reanimation* aCrazyDaveReanim = AddReanimation(0.0f + BOARD_ADDITIONAL_WIDTH, 0.0f + BOARD_OFFSET_Y, 0, ReanimationType::REANIM_CRAZY_DAVE);
+	Reanimation* aCrazyDaveReanim = AddReanimation(BOARD_ADDITIONAL_WIDTH, BOARD_OFFSET_Y, 0, ReanimationType::REANIM_CRAZY_DAVE);
 	aCrazyDaveReanim->mIsAttachment = true;
 	aCrazyDaveReanim->SetBasePoseFromAnim("anim_idle_handing");
 	mCrazyDaveReanimID = ReanimationGetID(aCrazyDaveReanim);
@@ -3201,7 +3137,7 @@ void LawnApp::UpdateCrazyDave()
 		}
 	}
 
-	if (mCrazyDaveState == CrazyDaveState::CRAZY_DAVE_IDLING || mCrazyDaveState == CrazyDaveState::CRAZY_DAVE_TALKING ||
+	if (mCrazyDaveState == CrazyDaveState::CRAZY_DAVE_IDLING || mCrazyDaveState == CrazyDaveState::CRAZY_DAVE_TALKING || 
 		mCrazyDaveState == CrazyDaveState::CRAZY_DAVE_HANDING_TALKING || mCrazyDaveState == CrazyDaveState::CRAZY_DAVE_HANDING_IDLING)
 	{
 		mCrazyDaveBlinkCounter--;
@@ -3249,8 +3185,8 @@ void LawnApp::DrawCrazyDave(Graphics* g)
 		}
 		else if (mGameMode == GameMode::GAMEMODE_UPSELL)
 		{
-			aPosX += 130;
-			aPosY += 70;
+			aPosX += 130 - BOARD_ADDITIONAL_WIDTH;
+			aPosY += 70 - BOARD_OFFSET_Y;
 		}
 		g->DrawImage(aBubbleImage, aPosX, aPosY);
 
@@ -3281,18 +3217,7 @@ void LawnApp::DrawCrazyDave(Graphics* g)
 		}
 	}
 
-	Graphics* aDaveGraphic = g;
-	if (mGameMode == GameMode::GAMEMODE_UPSELL)
-	{
-		aDaveGraphic->ClearClipRect();
-		aDaveGraphic->mTransX += BOARD_ADDITIONAL_WIDTH;
-		aDaveGraphic->mTransY += BOARD_OFFSET_Y;
-		aCrazyDaveReanim->Draw(aDaveGraphic);
-		aDaveGraphic->mTransX -= BOARD_ADDITIONAL_WIDTH;
-		aDaveGraphic->mTransY -= BOARD_OFFSET_Y;
-	}
-	else
-		aCrazyDaveReanim->Draw(aDaveGraphic);
+	aCrazyDaveReanim->Draw(g);
 }
 
 int LawnApp::GetNumPreloadingTasks()
@@ -3420,15 +3345,15 @@ void LawnApp::PreloadForUser()
 
 void LawnApp::EnforceCursor()
 {
-	if (HAS_CUSTOM_CURSOR)
-	{
-		::SetCursor(NULL);
-		return;
-	}
-
 	if (mSEHOccured || !mMouseIn)
 	{
 		::SetCursor(LoadCursor(NULL, IDC_ARROW));
+		return;
+	}
+
+	if (mCustomCursor)
+	{
+		::SetCursor(NULL);
 		return;
 	}
 
@@ -3511,27 +3436,37 @@ SexyString LawnApp::Pluralize(int theCount, const SexyChar* theSingular, const S
 int LawnApp::GetNumTrophies(ChallengePage thePage)
 {
 	int aNumTrophies = 0;
-
 	for (int i = 0; i < NUM_CHALLENGE_MODES; i++)
 	{
 		const ChallengeDefinition& aDef = GetChallengeDefinition(i);
-		if (aDef.mPage == thePage && HasBeatenChallenge(aDef.mChallengeMode))
-		{
+		if (aDef.mPage == thePage && aDef.mHasTrophy && HasBeatenChallenge(aDef.mChallengeMode))
 			aNumTrophies++;
-		}
 	}
-
 	return aNumTrophies;
 }
 
 int LawnApp::GetTotalTrophies(ChallengePage thePage)
 {
-	return thePage == CHALLENGE_PAGE_SURVIVAL ? 10 : thePage == CHALLENGE_PAGE_CHALLENGE ? 20 : thePage == CHALLENGE_PAGE_PUZZLE ? 18 : thePage == CHALLENGE_PAGE_LIMBO ? 0 : 0;
+	int aTotalTrophies = 0;
+	for (int i = 0; i < NUM_CHALLENGE_MODES; i++)
+	{
+		const ChallengeDefinition& aDef = GetChallengeDefinition(i);
+		if (aDef.mPage == thePage && aDef.mHasTrophy)
+			aTotalTrophies++;
+	}
+	return aTotalTrophies;
 }
 
 int LawnApp::TrophiesNeedForGoldSunflower()
 {
-	return 48 - GetNumTrophies(CHALLENGE_PAGE_SURVIVAL) - GetNumTrophies(CHALLENGE_PAGE_CHALLENGE) - GetNumTrophies(CHALLENGE_PAGE_PUZZLE);
+	int aNum = 0;
+	int aTotal = 0;
+	for (int i = 0; i < ChallengePage::MAX_CHALLENGE_PAGES; i++)
+	{
+		aNum += GetNumTrophies((ChallengePage)i);
+		aTotal += GetTotalTrophies((ChallengePage)i);
+	}
+	return aTotal - aNum;
 }
 
 bool LawnApp::EarnedGoldTrophy()
@@ -3579,18 +3514,14 @@ void LawnApp::InitHook()
 SexyString LawnApp::GetMoneyString(int theAmount)
 {
 	int aValue = theAmount * 10;
+	SexyString aMoney = _S("[CURRENCY_STRING]");
 	if (aValue > 999999)
-	{
-		return StrFormat(_S("$%d,%03d,%03d"), aValue / 1000000, (aValue - aValue / 1000000 * 1000000) / 1000, aValue - aValue / 1000 * 1000);
-	}
+		aMoney = TodReplaceString(aMoney, _S("{AMOUNT}"), StrFormat(_S("%d,%03d,%03d"), aValue / 1000000, (aValue - aValue / 1000000 * 1000000) / 1000, aValue - aValue / 1000 * 1000));
 	else if (aValue > 999)
-	{
-		return StrFormat(_S("$%d,%03d"), aValue / 1000, aValue - aValue / 1000 * 1000);
-	}
+		aMoney = TodReplaceString(aMoney, _S("{AMOUNT}"), StrFormat(_S("%d,%03d"), aValue / 1000, aValue - aValue / 1000 * 1000));
 	else
-	{
-		return StrFormat(_S("$%d"), aValue);
-	}
+		aMoney = TodReplaceString(aMoney, _S("{AMOUNT}"), StrFormat(_S("%d"), aValue));
+	return aMoney;
 }
 
 SexyString LawnGetCurrentLevelName()
@@ -3643,27 +3574,27 @@ void LawnApp::GetAchievement(AchievementType theAchievementType)
 	mAchievements->GiveAchievement(theAchievementType);
 }
 
-void LawnApp::UpdateDiscordState(SexyString def)
+void LawnApp::UpdateDiscordState(SexyString theState)
 {
-	SexyString State;
-	if (AlmanacDialog* dialog = (AlmanacDialog*)GetDialog(Dialogs::DIALOG_ALMANAC))
+	SexyString aState;
+	if (AlmanacDialog* aDialog = (AlmanacDialog*)GetDialog(Dialogs::DIALOG_ALMANAC))
 	{
-		if (dialog->mOpenPage == AlmanacPage::ALMANAC_PAGE_INDEX)
-			State = "Almanac (Index)";
-		else if (dialog->mOpenPage == AlmanacPage::ALMANAC_PAGE_ZOMBIES)
-			State = "Almanac (Zombies)";
-		else if (dialog->mOpenPage == AlmanacPage::ALMANAC_PAGE_PLANTS)
-			State = "Almanac (Plants)";
+		if (aDialog->mOpenPage == AlmanacPage::ALMANAC_PAGE_INDEX)
+			aState = _S("[DISCORD_ALMANAC_INDEX]");
+		else if (aDialog->mOpenPage == AlmanacPage::ALMANAC_PAGE_PLANTS)
+			aState = _S("[DISCORD_ALMANAC_PLANTS]");
+		else if (aDialog->mOpenPage == AlmanacPage::ALMANAC_PAGE_ZOMBIES)
+			aState = _S("[DISCORD_ALMANAC_ZOMBIES]");
 	}
 	else if (GetDialog(Dialogs::DIALOG_STORE))
-		State = "Store";
-	else if (NewOptionsDialog* dialog = (NewOptionsDialog*)GetDialog(Dialogs::DIALOG_NEWOPTIONS))
-		State = dialog->mAdvancedMode ? ("Advanced Options" + StrFormat(" (Page %d)", dialog->mAdvancedPage)) : "Options";
+		aState = _S("[DISCORD_STORE]");
+	else if (NewOptionsDialog* aDialog = (NewOptionsDialog*)GetDialog(Dialogs::DIALOG_NEWOPTIONS))
+		aState = aDialog->mAdvancedMode ? TodReplaceNumberString(_S("[DISCORD_ADVANCED_OPTIONS]"), _S("{PAGE}"), aDialog->mAdvancedPage) : _S("[DISCORD_OPTIONS]");
 	else if (GetDialog(Dialogs::DIALOG_USERDIALOG))
-		State = "Profiles";
+		aState = _S("[DISCORD_PROFILES]");
 	else
-		State = def;
-	mState = State;
+		aState = theState;
+	mState = aState;
 }
 
 bool LawnApp::CanDoPinataMode()
@@ -3714,7 +3645,7 @@ void LawnApp::ToggleDebugMode()
 	NewOptionsDialog* aNewOptionsDialog = (NewOptionsDialog*)GetDialog(Dialogs::DIALOG_NEWOPTIONS);
 	if (aNewOptionsDialog)
 	{
-		mTodCheatKeys = mDebugKeysEnabled = aNewOptionsDialog->mDebugModeBox->IsChecked();
+		mTodCheatKeys = mDebugKeysEnabled = aNewOptionsDialog->mDebugModeCheckbox->IsChecked();
 	}
 }
 
@@ -3722,6 +3653,7 @@ bool LawnApp::Is3dAccel()
 {
 	return mIs3dAccel;
 }
+
 
 /* #################################################################################################### */
 

@@ -68,7 +68,6 @@ public:
 	ChallengeScreen*				mChallengeScreen;								
 	MiniCreditsScreen*				mMiniCreditsScreen;	
 	AchievementScreen*				mAchievementScreen;
-	CursorWidget*					mCursor;
 	QuickPlayScreen*				mQuickPlayScreen;
 	TodFoley*						mSoundSystem;									
 	ButtonList						mControlButtonList;								
@@ -132,11 +131,11 @@ public:
 	bool							mDebugTrialLocked;								
 	bool							mMuteSoundsForCutscene;							
 	Achievements*					mAchievements;
-	bool							isFastMode;
+	bool							mIsFastMode;
 	SexyString						mVersion;
 	SexyString						mReconVersion;
 	SexyString						mGitCommit;
-	bool							mPlayedQuickplay;
+	bool							mPlayingQuickplay;
 	bool							mCrazySeeds;
 	time_t							mStartTime;
 	SexyString                      mDetails;
@@ -196,8 +195,8 @@ public:
 	void							DoHighScoreDialog();
 	void							DoBackToMain(bool hasSound = false);
 	void							DoConfirmBackToMain();
-	void							DoNewOptions(bool theFromGameSelector, int mX = -1, int mY = -1);
-	void							DoAdvancedOptions(bool theFromGameSelector, int mX, int mY);
+	void							DoNewOptions(bool theFromGameSelector, int theX = -1, int theY = -1);
+	void							DoAdvancedOptions(bool theFromGameSelector, int theX, int theY);
 	void							DoRegister();
 	void							DoRegisterError();
 	bool							CanDoRegisterDialog();
@@ -346,7 +345,7 @@ public:
 	virtual void					ToggleDebugMode();
 	static /*inline*/ void			CenterDialog(Dialog* theDialog, int theWidth, int theHeight);
 	void							GetAchievement(AchievementType theAchievementType);
-	void							UpdateDiscordState(SexyString def = "");
+	void							UpdateDiscordState(SexyString theState = "");
 	bool							Is3dAccel();
 };
 
