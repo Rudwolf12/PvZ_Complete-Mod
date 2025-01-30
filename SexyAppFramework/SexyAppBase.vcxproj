@@ -63,6 +63,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <UseFullPaths>true</UseFullPaths>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_USE_WIDE_STRING;WIN_32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -134,6 +135,7 @@
     <ClCompile Include="..\Lawn\Widget\CheatDialog.cpp" />
     <ClCompile Include="..\Lawn\Widget\ContinueDialog.cpp" />
     <ClCompile Include="..\Lawn\Widget\CreditScreen.cpp" />
+    <ClCompile Include="..\Lawn\Widget\CursorWidget.cpp" />
     <ClCompile Include="..\Lawn\Widget\GameSelector.cpp" />
     <ClCompile Include="..\Lawn\Widget\MiniCreditsScreen.cpp" />
     <ClCompile Include="..\Lawn\Widget\NewOptionsDialog.cpp" />
@@ -435,7 +437,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="CursorWidget.cpp" />
     <ClCompile Include="D3DInterface.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -703,6 +704,7 @@
     <ClInclude Include="..\Lawn\Widget\CheatDialog.h" />
     <ClInclude Include="..\Lawn\Widget\ContinueDialog.h" />
     <ClInclude Include="..\Lawn\Widget\CreditScreen.h" />
+    <ClInclude Include="..\Lawn\Widget\CursorWidget.h" />
     <ClInclude Include="..\Lawn\Widget\GameSelector.h" />
     <ClInclude Include="..\Lawn\Widget\MiniCreditsScreen.h" />
     <ClInclude Include="..\Lawn\Widget\NewOptionsDialog.h" />
@@ -962,7 +964,6 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CritSect.h" />
-    <ClInclude Include="CursorWidget.h" />
     <ClInclude Include="D3DInterface.h" />
     <ClInclude Include="D3DTester.h" />
     <ClInclude Include="DDImage.h" />

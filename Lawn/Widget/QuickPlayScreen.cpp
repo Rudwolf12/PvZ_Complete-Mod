@@ -41,7 +41,7 @@ QuickPlayScreen::QuickPlayScreen(LawnApp* theApp)
     mRightButton = MakeNewButton(2, this, "", nullptr, Sexy::IMAGE_QUICKPLAY_RIGHT_BUTTON,
         Sexy::IMAGE_QUICKPLAY_RIGHT_BUTTON_HIGHLIGHT, Sexy::IMAGE_QUICKPLAY_RIGHT_BUTTON_HIGHLIGHT);
 
-    mPlayButton = MakeButton(3, this, "PLAY");
+    mPlayButton = MakeButton(3, this, _S("[PLAY_BUTTON]"));
 
     mCrazySeedsCheck = MakeNewCheckbox(4, this, theApp->mCrazySeeds);
     mCrazySeedsCheck->mVisible = true;
@@ -187,7 +187,7 @@ void QuickPlayScreen::Draw(Graphics* g)
     int posX = 100 + BOARD_ADDITIONAL_WIDTH;
     g->DrawImage(Sexy::IMAGE_QUICKPLAY_WIDGET, posX, 0);
     TodDrawString(g, mApp->GetStageString(mApp->mQuickLevel).erase(0, 1), posX + (Sexy::IMAGE_QUICKPLAY_WIDGET->mWidth / 2), 30, Sexy::FONT_DWARVENTODCRAFT18GREENINSET, Color::White, DS_ALIGN_CENTER);
-    TodDrawString(g, "Crazy Dave Seeds", mCrazySeedsCheck->mX + 45, mCrazySeedsCheck->mY + 23, Sexy::FONT_DWARVENTODCRAFT18GREENINSET, Color::White, DS_ALIGN_LEFT);
+    TodDrawString(g, TodStringTranslate(_S("[CRAZY_DAVE_SEEDS]")), mCrazySeedsCheck->mX + 45, mCrazySeedsCheck->mY + 23, Sexy::FONT_DWARVENTODCRAFT18GREENINSET, Color::White, DS_ALIGN_LEFT);
 }
 
 void QuickPlayScreen::KeyDown(KeyCode theKey) {
@@ -212,60 +212,58 @@ void QuickPlayScreen::KeyDown(KeyCode theKey) {
 
 void QuickPlayScreen::DrawPool(Graphics* g, bool isNight)
 {
+    g->SetClipRect(135 + BOARD_ADDITIONAL_WIDTH - mX, 30, 450, 370);
     int aOffsetX = BOARD_ADDITIONAL_WIDTH / 2 + 12;
     g->mTransX += aOffsetX;
-    g->SetClipRect(135 + BOARD_ADDITIONAL_WIDTH - mX, 30, 450, 370);
     mApp->mPoolEffect->PoolEffectDraw(g, isNight);
-    g->ClearClipRect();
     g->mTransX -= aOffsetX;
+    g->ClearClipRect();
 }
 
 void QuickPlayScreen::ChooseBackground()
 {
-    SexyString groupName;
-    if (mApp->mQuickLevel <= 1 * LEVELS_PER_AREA)
+    SexyString aGroupName;
+    if (mApp->mQuickLevel == 35)
     {
-        groupName = "DelayLoad_Background1";
+        aGroupName = "DelayLoad_Background2";
+        mBackground = BackgroundType::BACKGROUND_2_NIGHT;
+    }
+    else if (mApp->mQuickLevel <= 1 * LEVELS_PER_AREA)
+    {
+        aGroupName = "DelayLoad_Background1";
         mBackground = BackgroundType::BACKGROUND_1_DAY;
     }
     else if (mApp->mQuickLevel <= 2 * LEVELS_PER_AREA)
     {
-        groupName = "DelayLoad_Background2";
+        aGroupName = "DelayLoad_Background2";
         mBackground = BackgroundType::BACKGROUND_2_NIGHT;
     }
     else if (mApp->mQuickLevel <= 3 * LEVELS_PER_AREA)
     {
-        groupName = "DelayLoad_Background3";
+        aGroupName = "DelayLoad_Background3";
         mBackground = BackgroundType::BACKGROUND_3_POOL;
     }
     else if (mApp->mQuickLevel <= 4 * LEVELS_PER_AREA)
     {
-        groupName = "DelayLoad_Background4";
+        aGroupName = "DelayLoad_Background4";
         mBackground = BackgroundType::BACKGROUND_4_FOG;
     }
     else if (mApp->mQuickLevel < FINAL_LEVEL)
     {
-        groupName = "DelayLoad_Background5";
+        aGroupName = "DelayLoad_Background5";
         mBackground = BackgroundType::BACKGROUND_5_ROOF;
     }
     else if (mApp->mQuickLevel == FINAL_LEVEL)
     {
-        groupName = "DelayLoad_Background6";
+        aGroupName = "DelayLoad_Background6";
         mBackground = BackgroundType::BACKGROUND_6_BOSS;
     }
     else
     {
-        groupName = "DelayLoad_Background1";
+        aGroupName = "DelayLoad_Background1";
         mBackground = BackgroundType::BACKGROUND_1_DAY;
     }
-
-    if (mApp->mQuickLevel == 35)
-    {
-        groupName = "DelayLoad_Background2";
-        mBackground = BackgroundType::BACKGROUND_2_NIGHT;
-    }
-    if (!mApp->mResourceManager->IsGroupLoaded(groupName))
-        TodLoadResources(groupName);
+    TodLoadResources(aGroupName);
 }
 
 void QuickPlayScreen::ChooseZombieType()
@@ -334,9 +332,9 @@ void QuickPlayScreen::Update()
     }
     mApp->mPoolEffect->PoolEffectUpdate();
     TOD_ASSERT(mApp->mQuickLevel < NUM_LEVELS + 1);
-    if (mDisplayZombie) mDisplayZombie->UpdateReanim();
-    if (mDisplayPlant) mDisplayPlant->UpdateReanim();
-    if (mFlowerPot) mFlowerPot->UpdateReanim();
+    if (mDisplayZombie) mDisplayZombie->Update();
+    if (mDisplayPlant) mDisplayPlant->Update();
+    if (mFlowerPot) mFlowerPot->Update();
 }
 
 void QuickPlayScreen::ButtonDepress(int theId)

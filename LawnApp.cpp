@@ -125,8 +125,8 @@ LawnApp::LawnApp()
 	mDebugKeysEnabled = false;
 	mIsFastMode = false;
 	mVersion = "0.1";
-	mReconVersion = "PvZ: CE " + mVersion;
-	mTitle = _S("Plants vs. Zombis: Complete edition " + mVersion);
+	mReconVersion = "PvZ: CER " + mVersion;
+	mTitle = _S("Plantas vs. Zombis: Complete Mod " + mVersion);
 	mCustomCursorsEnabled = false;
 	mPlayerInfo = nullptr;
 	mLastLevelStats = new LevelStats();

@@ -38,9 +38,19 @@
 #include "../PakLib/PakInterface.h"
 #include <string>
 #include <shlobj.h>
-#include "../GameConstants.h";
+#include "../GameConstants.h"
+#include "../Sexy.TodLib/TodStringFile.h"
 
 #include "memmgr.h"
+#include "../Resources.h"
+#include "../Sexy.TodLib/TodCommon.h"
+#include "../Sexy.TodLib/ReanimAtlas.h"
+#include "../LawnApp.h"
+#include "../Lawn/System/ReanimationLawn.h"
+#include "../Sexy.TodLib/FilterEffect.h"
+#include "../Sexy.TodLib/Reanimator.h"
+#include "../Sexy.TodLib/Definition.h"
+#include "../Sexy.TodLib/Trail.h"
 
 using namespace Sexy;
 
@@ -166,16 +176,15 @@ SexyAppBase::SexyAppBase()
 	mFullScreenPageFlip = true; // should we page flip in fullscreen?
 	mTimeLoaded = GetTickCount();
 	mSEHOccured = false;
-	mProdName = "Product";
 	mTitle = _S("SexyApp");
 	mShutdown = false;
 	mExitToTop = false;
-	mWidth = 640;
-	mHeight = 480;
+	mWidth = 1920;
+	mHeight = 1080;
 	mFullscreenBits = 32;
-	mIsWindowed = true;
+	mIsWindowed = false;
 	mIsPhysWindowed = true;
-	mFullScreenWindow = false;
+	mFullScreenWindow = true;
 	mPreferredX = -1;
 	mPreferredY = -1;
 	mIsScreenSaver = false;
@@ -276,7 +285,7 @@ SexyAppBase::SexyAppBase()
 	mWaitForVSync = false;
 	mSoftVSyncWait = true;
 	mUserChanged3DSetting = false;
-	mAutoEnable3D = false;
+	mAutoEnable3D = true;
 	mTest3D = false;
 	mMinVidMemory3D = 6;
 	mRecommendedVidMemory3D = 14;
@@ -284,7 +293,7 @@ SexyAppBase::SexyAppBase()
 	mWidescreenAware = false;
 	mEnableWindowAspect = false;
 	mWindowAspect.Set(16, 9);
-	mIsWideWindow = false;
+	mIsWideWindow = true;
 	mAspectCorrect = true;
 	mAspectNoStretch = false;
 	mDiscordPresence = true;
@@ -292,36 +301,31 @@ SexyAppBase::SexyAppBase()
 	mQuickLevel = 1;
 	mBankKeybinds = false;
 	mZeroNineBankFormat = false;
-	mAutoCollectSuns = false;
-	mAutoCollectCoins = false;
+	mAutoCollectSuns = true;
+	mAutoCollectCoins = true;
 	mZombieHealthbars = false;
 	mPlantHealthbars = false;
 	mIs3dAccel = true;
 	mCrazySeeds = false;
+	mLanguagePath = "languages";
+	mLanguage = "";
+	mLanguageIndex = -1;
+	mResourcePackPath = "resourcepacks";
+	mResourcePack = "";
+	mResourcePackIndex = -1;
+	mResourcesPath = "properties\\resources.xml";
+	mCursor = nullptr;
+	mCustomCursor = false;
+	mProdName = "PlantsVsZombies";
+	mRegKey = "PopCap\\PlantsVsZombies";
 
 	int i;
-
 	for (i = 0; i < NUM_CURSORS; i++)
 		mCursorImages[i] = NULL;
-
 	for (i = 0; i < 256; i++)
 		mAdd8BitMaxTable[i] = i;
-
 	for (i = 256; i < 512; i++)
 		mAdd8BitMaxTable[i] = 255;
-
-	// Set default strings.  Init could read in overrides from partner.xml
-	SetString("DIALOG_BUTTON_OK", L"OK");
-	SetString("DIALOG_BUTTON_CANCEL", L"CANCEL");
-
-	SetString("UPDATE_CHECK_TITLE", L"Update Check");
-	SetString("UPDATE_CHECK_BODY", L"Checking if there are any updates available for this product ...");
-
-	SetString("UP_TO_DATE_TITLE", L"Up to Date");
-	SetString("UP_TO_DATE_BODY", L"There are no updates available for this product at this time.");
-	SetString("NEW_VERSION_TITLE", L"New Version");
-	SetString("NEW_VERSION_BODY", L"There is an update available for this product.  Would you like to visit the web site to download it?");
-
 
 	mDemoPrefix = "sexyapp";
 	mDemoFileName = mDemoPrefix + ".dmo";
@@ -380,6 +384,12 @@ SexyAppBase::SexyAppBase()
 
 SexyAppBase::~SexyAppBase()
 {
+	if (mCursor)
+	{
+		mWidgetManager->RemoveWidget(mCursor);
+		delete mCursor;
+	}
+
 	Shutdown();
 
 	// Check if we should write the current 3d setting
@@ -1576,17 +1586,20 @@ void SexyAppBase::WriteToRegistry()
 	RegistryWriteInteger("PreferredY", mPreferredY);
 	RegistryWriteInteger("CustomCursors", mCustomCursorsEnabled ? 1 : 0);
 	RegistryWriteInteger("InProgress", 0);
-	RegistryWriteInteger("QotL_SpeedModifier", mSpeedModifier);
-	RegistryWriteInteger("QotL_QuickLevel", mQuickLevel);
+	RegistryWriteInteger("QE_SpeedModifier", mSpeedModifier);
+	RegistryWriteInteger("QE_QuickLevel", mQuickLevel);
 	RegistryWriteBoolean("WaitForVSync", mWaitForVSync);
-	RegistryWriteBoolean("QotL_DiscordPresence", mDiscordPresence);
-	RegistryWriteBoolean("QotL_BankKeybinds", mBankKeybinds);
-	RegistryWriteBoolean("QotL_ZeroNineBankFormat", mZeroNineBankFormat);
-	RegistryWriteBoolean("QotL_AutoCollectSuns", mAutoCollectSuns);
-	RegistryWriteBoolean("QotL_AutoCollectCoins", mAutoCollectCoins);
-	RegistryWriteBoolean("QotL_ZombieHealthbars", mZombieHealthbars);
-	RegistryWriteBoolean("QotL_PlantHealthbars", mPlantHealthbars);
-	RegistryWriteBoolean("QotL_CrazyDaveSeeds", mCrazySeeds);
+	RegistryWriteBoolean("QE_DiscordPresence", mDiscordPresence);
+	RegistryWriteBoolean("QE_BankKeybinds", mBankKeybinds);
+	RegistryWriteBoolean("QE_ZeroNineBankFormat", mZeroNineBankFormat);
+	RegistryWriteBoolean("QE_AutoCollectSuns", mAutoCollectSuns);
+	RegistryWriteBoolean("QE_AutoCollectCoins", mAutoCollectCoins);
+	RegistryWriteBoolean("QE_ZombieHealthbars", mZombieHealthbars);
+	RegistryWriteBoolean("QE_PlantHealthbars", mPlantHealthbars);
+	RegistryWriteBoolean("QE_CrazyDaveSeeds", mCrazySeeds);
+	RegistryWriteString("QE_Language", mLanguage);
+	RegistryWriteString("QE_ResourcePack", mResourcePack);
+	RegistryWriteBoolean("QE_CustomCursor", mCustomCursor);
 	RegistryWriteBoolean("3DAcceleration", mIs3dAccel);
 	RegistryWriteInteger("MouseSensitivity", (int)(mMouseSensitivity * 100));
 }
@@ -1900,7 +1913,6 @@ bool SexyAppBase::RegistryReadData(const std::string& theKey, uchar* theValue, u
 void SexyAppBase::ReadFromRegistry()
 {
 	mReadFromRegistry = true;
-	mRegKey = SexyStringToString(GetString("RegistryKey", StringToSexyString(mRegKey)));
 
 	if (mRegKey.length() == 0)
 		return;
@@ -1929,22 +1941,26 @@ void SexyAppBase::ReadFromRegistry()
 
 	RegistryReadInteger("PreferredX", &mPreferredX);
 	RegistryReadInteger("PreferredY", &mPreferredY);
-	RegistryReadInteger("QotL_SpeedModifier", &mSpeedModifier);
-	RegistryReadInteger("QotL_QuickLevel", &mQuickLevel);
+	RegistryReadInteger("QE_SpeedModifier", &mSpeedModifier);
+	mSpeedModifier = max(SPEED_MODIFIER_MIN, min(mSpeedModifier, SPEED_MODIFIER_MAX));
+	RegistryReadInteger("QE_QuickLevel", &mQuickLevel);
 	mQuickLevel = max(1, min(mQuickLevel, NUM_LEVELS));
 
 	if (RegistryReadInteger("CustomCursors", &anInt))
 		EnableCustomCursors(anInt != 0);
 
 	RegistryReadBoolean("WaitForVSync", &mWaitForVSync);
-	RegistryReadBoolean("QotL_DiscordPresence", &mDiscordPresence);
-	RegistryReadBoolean("QotL_BankKeybinds", &mBankKeybinds);
-	RegistryReadBoolean("QotL_ZeroNineBankFormat", &mZeroNineBankFormat);
-	RegistryReadBoolean("QotL_AutoCollectSuns", &mAutoCollectSuns);
-	RegistryReadBoolean("QotL_AutoCollectCoins", &mAutoCollectCoins);
-	RegistryReadBoolean("QotL_ZombieHealthbars", &mZombieHealthbars);
-	RegistryReadBoolean("QotL_PlantHealthbars", &mPlantHealthbars);
-	RegistryReadBoolean("QotL_CrazyDaveSeeds", &mCrazySeeds);
+	RegistryReadBoolean("QE_DiscordPresence", &mDiscordPresence);
+	RegistryReadBoolean("QE_BankKeybinds", &mBankKeybinds);
+	RegistryReadBoolean("QE_ZeroNineBankFormat", &mZeroNineBankFormat);
+	RegistryReadBoolean("QE_AutoCollectSuns", &mAutoCollectSuns);
+	RegistryReadBoolean("QE_AutoCollectCoins", &mAutoCollectCoins);
+	RegistryReadBoolean("QE_ZombieHealthbars", &mZombieHealthbars);
+	RegistryReadBoolean("QE_PlantHealthbars", &mPlantHealthbars);
+	RegistryReadBoolean("QE_CrazyDaveSeeds", &mCrazySeeds);
+	RegistryReadString("QE_Language", &mLanguage);
+	RegistryReadString("QE_ResourcePack", &mResourcePack);
+	RegistryReadBoolean("QE_CustomCursor", &mCustomCursor);
 	RegistryReadBoolean("3DAcceleration", &mIs3dAccel);
 
 	if (RegistryReadInteger("InProgress", &anInt))
@@ -2237,6 +2253,12 @@ void SexyAppBase::UpdateFrames()
 	{
 		if (mWidgetManager->UpdateFrame())
 			++mFPSDirtyCount;
+	}
+
+	if (mCursor)
+	{
+		mCursor->SetImage(IMAGE_MOUSE_CURSOR);
+		mWidgetManager->BringToFront(mCursor);
 	}
 
 	mMusicInterface->Update();
@@ -3771,6 +3793,114 @@ LRESULT CALLBACK SexyAppBase::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 	else
 		return DefWindowProcA(hWnd, uMsg, wParam, lParam);
+}
+
+void SexyAppBase::SwitchLanguage()
+{
+	mLanguageIndex = (mLanguageIndex + 1) % mLanguages.size();
+	int aIndex = 0;
+	for (std::map<std::string, StringWStringMap>::iterator aIt = mLanguages.begin(); aIt != mLanguages.end(); ++aIt, ++aIndex)
+	{
+		if (aIndex == mLanguageIndex)
+		{
+			mLanguage = aIt->first;
+			break;
+		}
+	}
+	LoadCurrentLanguage();
+}
+
+void SexyAppBase::ReloadLanguages()
+{
+	WIN32_FIND_DATA aFindFileData;
+	HANDLE aFind = FindFirstFile((mLanguagePath + "/*").c_str(), &aFindFileData);
+	DBG_ASSERT(aFind != INVALID_HANDLE_VALUE);
+	mLanguages.clear();
+	mStringProperties.clear();
+	do
+	{
+		std::string aFileName = aFindFileData.cFileName;
+		size_t aFileExtension = aFileName.find_last_of('.');
+		if (aFileExtension != std::string::npos && aFileName.substr(aFileExtension) == ".lang")
+		{
+			bool aIsLoaded = TodStringListLoad((mLanguagePath + "/" + aFileName).c_str());
+			if (!aIsLoaded)
+				continue;
+			mLanguages[aFileName.substr(0, aFileExtension)] = mStringProperties;
+			mStringProperties.clear();
+		}
+	} while (FindNextFile(aFind, &aFindFileData) != 0);
+	FindClose(aFind);
+	DBG_ASSERT(!mLanguages.empty());
+}
+
+void SexyAppBase::LoadCurrentLanguage()
+{
+	for (std::map<std::string, StringWStringMap>::iterator aIt = mLanguages.begin(); aIt != mLanguages.end(); ++aIt)
+	{
+		if (aIt->first == mLanguage)
+		{
+			mStringProperties = aIt->second;
+			break;
+		}
+	}
+}
+
+void SexyAppBase::SwitchResourcePack()
+{
+	if (mResourceManager->mResourcePackImageMaps.empty())
+		return;
+	if (mResourcePackIndex == -1)
+		mResourcePackIndex = 0;
+	else if (mResourcePackIndex < mResourceManager->mResourcePackImageMaps.size() - 1)
+		mResourcePackIndex++;
+	else
+		mResourcePackIndex = -1;
+	if (mResourcePackIndex != -1)
+	{
+		int aIndex = 0;
+		for (std::map<std::string, ResourceManager::ResMap>::iterator aIt = mResourceManager->mResourcePackImageMaps.begin(); aIt != mResourceManager->mResourcePackImageMaps.end(); ++aIt, ++aIndex)
+		{
+			if (aIndex == mResourcePackIndex)
+			{
+				mResourcePack = aIt->first;
+				break;
+			}
+		}
+	}
+	else
+		mResourcePack = "";
+	LoadCurrentResourcePack();
+}
+
+void SexyAppBase::ReloadResourcePacks()
+{
+	if (!mResourceManager->ParseResourcesFile(mResourcesPath, true))
+		ShowResourceError(true);
+	DefinitionLoadResourcePackImages();
+	LoadCurrentResourcePack();
+}
+
+void SexyAppBase::LoadCurrentResourcePack()
+{
+	for (std::set<std::string, StringLessNoCase>::iterator aIt = mResourceManager->mLoadedGroups.begin(); aIt != mResourceManager->mLoadedGroups.end(); ++aIt)
+		ExtractResourcesByName(mResourceManager, (*aIt).c_str());
+	if (!mLoaded)
+		return;
+	ReloadReanimationAtlases();
+	ClearReanimationCache();
+	ClearParticleCache();
+	ClearTrailCache();
+	gLawnApp->mReanimatorCache->ReanimatorCacheDispose();
+	gLawnApp->mReanimatorCache->ReanimatorCacheInitialize();
+	FilterEffectDisposeForApp();
+}
+
+SexyString SexyAppBase::GetResourcePackString()
+{
+	std::string	aResourcePack = mResourcePack;
+	std::replace(aResourcePack.begin(), aResourcePack.end(), ' ', '_');
+	return mResourcePackIndex == -1 ? _S("[NO_RESOURCE_PACK]") : _S("[RESOURCE_PACK_" + Upper(aResourcePack) + "]");
 }
 
 void SexyAppBase::HandleNotifyGameMessage(int theType, int theParam)
@@ -6143,10 +6273,7 @@ void SexyAppBase::Init()
 			char aPath[MAX_PATH];
 			aFunc(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, aPath);
 
-			std::string aDataPath = RemoveTrailingSlash(aPath) + "\\" + mFullCompanyName + "\\" + mProdName;
-			SetAppDataFolder("savefiles\\");
-			//MkDir(aDataPath);
-			//AllowAllAccess(aDataPath);
+			SetAppDataFolder("appdata\\");
 			if (mDemoFileName.length() < 2 || (mDemoFileName[1] != ':' && mDemoFileName[2] != '\\'))
 			{
 				mDemoFileName = GetAppDataFolder() + mDemoFileName;
@@ -6372,6 +6499,9 @@ void SexyAppBase::Init()
 	}
 
 	InitHook();
+
+	mCursor = new CursorWidget(this);
+	mWidgetManager->AddWidget(mCursor);
 
 	mInitialized = true;
 }
@@ -7102,7 +7232,7 @@ void SexyAppBase::Set3DAcclerated(bool is3D, bool reinit)
 	}
 }
 
-SharedImageRef SexyAppBase::GetSharedImage(const std::string& theFileName, const std::string& theVariant, bool* isNew)
+SharedImageRef SexyAppBase::GetSharedImage(const std::string& theFileName, const std::string& theVariant, bool* isNew, bool theReplace)
 {
 	std::string anUpperFileName = StringToUpper(theFileName);
 	std::string anUpperVariant = StringToUpper(theVariant);
@@ -7116,10 +7246,12 @@ SharedImageRef SexyAppBase::GetSharedImage(const std::string& theFileName, const
 		aSharedImageRef = &aResultPair.first->second;
 	}
 
-	if (isNew != NULL)
-		*isNew = aResultPair.second;
+	bool aReplaceOrInserted = theReplace || aResultPair.second;
 
-	if (aResultPair.second)
+	if (isNew != NULL)
+		*isNew = aReplaceOrInserted;
+
+	if (aReplaceOrInserted)
 	{
 		// Pass in a '!' as the first char of the file name to create a new image
 		if ((theFileName.length() > 0) && (theFileName[0] == '!'))

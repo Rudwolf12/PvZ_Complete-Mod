@@ -19,7 +19,7 @@
 #include "../SexyAppFramework/Graphics.h"
 #include "../Sexy.TodLib/TodStringFile.h"
 
-static SpecialGridPlacement gGreenhouseGridPlacement[] =  
+static SpecialGridPlacement gGreenhouseGridPlacement[] =
 {
     { 313, 133, 0, 0 },
     { 395, 131, 1, 0 },
@@ -55,7 +55,7 @@ static SpecialGridPlacement gGreenhouseGridPlacement[] =
     { 931, 428, 7, 3 }
 };
 
-static SpecialGridPlacement gMushroomGridPlacement[] = {  
+static SpecialGridPlacement gMushroomGridPlacement[] = {
     { 350, 501, 0, 0 },
     { 477, 420, 1, 0 },
     { 538, 518, 2, 0 },
@@ -66,7 +66,7 @@ static SpecialGridPlacement gMushroomGridPlacement[] = {
     { 792, 343, 7, 0 }
 };
 
-static SpecialGridPlacement gAquariumGridPlacement[] = {  
+static SpecialGridPlacement gAquariumGridPlacement[] = {
     { 353, 245, 0, 0 },
     { 546, 180, 1, 0 },
     { 596, 330, 2, 0 },
@@ -2322,7 +2322,7 @@ void ZenGarden::OpenStore()
         aStore->SetupForIntro(2600);
         mApp->mPlayerInfo->mPurchases[(int)StoreItem::STORE_ITEM_FERTILIZER] = PURCHASE_COUNT_OFFSET + 5;
     }
-    aStore->mBackButton->SetLabel(_S("[STORE_BACK_TO_GAME]"));
+    aStore->mBackButton->mLabel = _S("[STORE_BACK_TO_GAME]");
     aStore->mPage = StorePages::STORE_PAGE_ZEN1;
     aStore->WaitForResult(true);
 
@@ -2345,7 +2345,7 @@ void ZenGarden::OpenStore()
 
 void ZenGarden::SetupForZenTutorial()
 {
-    mBoard->mMenuButton->SetLabel(_S("[CONTINUE_BUTTON]"));
+    mBoard->mMenuButton->mLabel = _S("[CONTINUE_BUTTON]");
     mBoard->mStoreButton->mDisabled = true;
     mBoard->mStoreButton->mBtnNoDraw = true;
     mBoard->mMenuButton->mDisabled = true;

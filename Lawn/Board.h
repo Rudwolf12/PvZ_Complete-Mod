@@ -179,9 +179,7 @@ public:
 	AdviceType						mHelpIndex;												
 	bool							mFinalBossKilled;										
 	bool							mShowShovel;											
-	int								mCoinBankFadeCount;			
-	int								mCoinBankX;
-	int								mCoinBankY;
+	int								mCoinBankFadeCount;										
 	DebugTextMode					mDebugTextMode;											
 	bool							mLevelComplete;											
 	int								mBoardFadeOutCounter;									
@@ -235,6 +233,8 @@ public:
 	bool							mCoinFaded;
 	int								mAchievementCoinCount;
 	int								mGargantuarsKilled;
+	int								mCoinBankX;
+	int								mCoinBankY;
 
 public:
 	Board(LawnApp* theApp);

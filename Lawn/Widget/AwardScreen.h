@@ -21,16 +21,16 @@ private:
 	};
 
 public:
-	GameButton* mStartButton;
-	GameButton* mMenuButton;
-	LawnApp* mApp;
-	int					mFadeInCounter;
+	GameButton*			mStartButton;		
+	GameButton*			mMenuButton;		
+	LawnApp*			mApp;				
+	int					mFadeInCounter;		
 	int					mAchievementCounter;
-	AwardType			mAwardType;
+	AwardType			mAwardType;			
 	bool				mShowAchievements;
 	bool				mWasDrawn;
 	SexyString			mState;
-	Sexy::Slider* mSlider;
+	Sexy::Slider*		mSlider;
 	float				mScrollPosition;
 	float				mScrollAmount;
 	const float			mBaseScrollSpeed = 1.75f;

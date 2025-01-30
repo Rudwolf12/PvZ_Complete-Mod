@@ -129,6 +129,24 @@ ZombieAllowedLevels gZombieAllowedLevels[NUM_ZOMBIE_TYPES] = {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		}
 	},
+	{ ZOMBIE_JACKSON,
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		}
+	},
+	{ ZOMBIE_BACKUP_DANCER2,
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		}
+	},
 	{ ZOMBIE_DUCKY_TUBE, { 0 } },
 	{ ZOMBIE_SNORKEL,
 		{
@@ -202,7 +220,7 @@ ZombieAllowedLevels gZombieAllowedLevels[NUM_ZOMBIE_TYPES] = {
 			0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
 		}
 	},
-	{ ZOMBIE_YETI, {0} },
+	{ ZOMBIE_YETI, {}},
 	{ ZOMBIE_BUNGEE,
 		{
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -248,14 +266,14 @@ ZombieAllowedLevels gZombieAllowedLevels[NUM_ZOMBIE_TYPES] = {
 			0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
 		}
 	},
-	{ ZOMBIE_BOSS, {0} },
-	{ ZOMBIE_REDEYE_GARGANTUAR, {0} },
-	{ ZOMBIE_PEA_HEAD, {0} },
-	{ ZOMBIE_WALLNUT_HEAD, {0} },
-	{ ZOMBIE_JALAPENO_HEAD, {0} },
-	{ ZOMBIE_GATLING_HEAD, {0} },
-	{ ZOMBIE_SQUASH_HEAD, {0} },
-	{ ZOMBIE_TALLNUT_HEAD, {0} },
+	{ ZOMBIE_BOSS, {}},
+	{ ZOMBIE_REDEYE_GARGANTUAR, {}},
+	{ ZOMBIE_PEA_HEAD, {}},
+	{ ZOMBIE_WALLNUT_HEAD, {}},
+	{ ZOMBIE_JALAPENO_HEAD, {}},
+	{ ZOMBIE_GATLING_HEAD, {}},
+	{ ZOMBIE_SQUASH_HEAD, {}},
+	{ ZOMBIE_TALLNUT_HEAD, {}},
 };
 
 SeedType gArtChallengeWallnut[MAX_GRID_SIZE_Y][MAX_GRID_SIZE_X] = {  
@@ -1212,7 +1230,6 @@ void Challenge::AdvanceCrazyDaveDialog()
 
 bool Challenge::MouseDown(int x, int y, int theClickCount, HitResult* theHitResult)
 {
-
 	if (mApp->mGameMode == GAMEMODE_CHALLENGE_ZEN_GARDEN)
 	{
 		return mApp->mZenGarden->MouseDownZenGarden(x, y, theClickCount, theHitResult);
@@ -1997,20 +2014,20 @@ void Challenge::UpdateSlotMachine()
 				if (aSeedType == SEED_SLOT_MACHINE_DIAMOND)
 				{
 					mBoard->DisplayAdvice(_S("[ADVICE_SLOT_MACHINE_2_DIAMONDS]"), MESSAGE_STYLE_SLOT_MACHINE, ADVICE_NONE);
-					mBoard->AddCoin(560, 145, COIN_DIAMOND, COIN_MOTION_COIN);
+					mBoard->AddCoin(360, 85, COIN_DIAMOND, COIN_MOTION_COIN);
 				}
 				else if (aSeedType == SEED_SLOT_MACHINE_SUN)
 				{
 					mBoard->DisplayAdvice(_S("[ADVICE_SLOT_MACHINE_2_SUNS]"), MESSAGE_STYLE_SLOT_MACHINE, ADVICE_NONE);
 					for (int i = 0; i < 4; i++)
 					{
-						mBoard->AddCoin(560 + i * 15, 145, COIN_SUN, COIN_MOTION_COIN);
+						mBoard->AddCoin(320 + i * 15, 85, COIN_SUN, COIN_MOTION_COIN);
 					}
 				}
 				else
 				{
 					mBoard->DisplayAdvice(_S("[ADVICE_SLOT_MACHINE_2_OF_A_KIND]"), MESSAGE_STYLE_SLOT_MACHINE, ADVICE_NONE);
-					mBoard->AddCoin(560, 145, COIN_USABLE_SEED_PACKET, COIN_MOTION_COIN)->mUsableSeedType = aSeedType;
+					mBoard->AddCoin(360, 85, COIN_USABLE_SEED_PACKET, COIN_MOTION_COIN)->mUsableSeedType = aSeedType;
 				}
 			}
 		}
@@ -2022,7 +2039,7 @@ void Challenge::UpdateSlotMachine()
 				mBoard->DisplayAdvice(_S("[ADVICE_SLOT_MACHINE_DIAMOND_JACKPOT]"), MESSAGE_STYLE_SLOT_MACHINE, ADVICE_NONE);
 				for (int i = 0; i < 5; i++)
 				{
-					mBoard->AddCoin(560 + i * 12, 145, COIN_DIAMOND, COIN_MOTION_COIN);
+					mBoard->AddCoin(320 + i * 12, 85, COIN_DIAMOND, COIN_MOTION_COIN);
 				}
 			}
 			else if (aPacket1 == SEED_SLOT_MACHINE_SUN)
@@ -2030,7 +2047,7 @@ void Challenge::UpdateSlotMachine()
 				mBoard->DisplayAdvice(_S("[ADVICE_SLOT_MACHINE_SUN_JACKPOT]"), MESSAGE_STYLE_SLOT_MACHINE, ADVICE_NONE);
 				for (int i = 0; i < 20; i++)
 				{
-					mBoard->AddCoin(560 + i * 3, 145, COIN_SUN, COIN_MOTION_COIN);
+					mBoard->AddCoin(320 + i * 3, 85, COIN_SUN, COIN_MOTION_COIN);
 				}
 			}
 			else
@@ -2038,7 +2055,7 @@ void Challenge::UpdateSlotMachine()
 				mBoard->DisplayAdvice(_S("[ADVICE_SLOT_MACHINE_3_OF_A_KIND]"), MESSAGE_STYLE_SLOT_MACHINE, ADVICE_NONE);
 				for (int i = 0; i < 3; i++)
 				{
-					mBoard->AddCoin(560 + i * 20, 145, COIN_USABLE_SEED_PACKET, COIN_MOTION_COIN)->mUsableSeedType = aPacket1;
+					mBoard->AddCoin(320 + i * 20, 85, COIN_USABLE_SEED_PACKET, COIN_MOTION_COIN)->mUsableSeedType = aPacket1;
 				}
 			}
 		}
@@ -2113,14 +2130,14 @@ void Challenge::Update()
 	{
 		ScaryPotterUpdate();
 	}
-	if (mApp->CanShowSeedBankAfterSun() && mBoard->mSeedBank->mY < SEED_BANK_OFFSET)
+	if (mApp->CanShowSeedBankAfterSun() && mBoard->mSeedBank->mY < 0)
 	{
 		if (mBoard->mSunMoney + mBoard->CountSunBeingCollected() > 0 || mBoard->mSeedBank->mY > Sexy::IMAGE_SEEDBANK->mWidth)
 		{
-			mBoard->mSeedBank->mY += 6;
-			if (mBoard->mSeedBank->mY > SEED_BANK_OFFSET)
+			mBoard->mSeedBank->mY += 2;
+			if (mBoard->mSeedBank->mY > 0)
 			{
-				mBoard->mSeedBank->mY = SEED_BANK_OFFSET;
+				mBoard->mSeedBank->mY = 0;
 			}
 		}
 	}
@@ -2288,7 +2305,7 @@ void Challenge::DrawBeghouled(Graphics* g)
 			}
 		}
 	}
-
+			
 	if (mApp->mGameMode == GAMEMODE_CHALLENGE_BEGHOULED_TWIST)
 	{
 		HitResult aHitResult;
@@ -2658,6 +2675,7 @@ void Challenge::InitZombieWaves()
 			aList[ZOMBIE_POLEVAULTER] = true;
 			aList[ZOMBIE_NEWSPAPER] = true;
 			aList[ZOMBIE_DANCER] = true;
+			aList[ZOMBIE_JACKSON] = true;
 			aList[ZOMBIE_DOOR] = true;
 		}
 	}
@@ -2848,7 +2866,6 @@ bool Challenge::UpdateZombieSpawning()
 	}
 	else return
 		mApp->IsFinalBossLevel() ||
-		mApp->mGameMode == GAMEMODE_CHALLENGE_ICE ||
 		mApp->mGameMode == GAMEMODE_CHALLENGE_ZEN_GARDEN ||
 		mApp->mGameMode == GAMEMODE_TREE_OF_WISDOM ||
 		mApp->mGameMode == GAMEMODE_CHALLENGE_ZOMBIQUARIUM ||
@@ -3544,8 +3561,8 @@ bool Challenge::BeghouledCanClearCrater()
 Zombie* Challenge::ZombiquariumSpawnSnorkle()
 {
 	Zombie* aZombie = mBoard->AddZombieInRow(ZOMBIE_SNORKEL, 0, 0);
-	aZombie->mPosX = RandRangeFloat(50, 650);
-	aZombie->mPosY = RandRangeFloat(100, 400);
+	aZombie->mPosX = RandRangeFloat(50, BOARD_WIDTH - 150);
+	aZombie->mPosY = RandRangeFloat(100, BOARD_HEIGHT - 200);
 	return aZombie;
 }
 
@@ -3596,7 +3613,7 @@ void Challenge::ZombiquariumDropBrain(int x, int y)
 
 void Challenge::ZombiquariumMouseDown(int x, int y)
 {
-	if (x < 80 || x > 720 || y < 90 || y > 430)
+	if (x < 80 || x > BOARD_WIDTH - 80 || y < 90 || y > BOARD_HEIGHT - 170)
 		return;
 	
 	int aBrainsCount = 0;
@@ -3669,7 +3686,7 @@ void Challenge::ZombiquariumUpdate()
 		{
 			aGridItem->mGridItemCounter++;
 			aGridItem->mPosY += 0.15f;
-			if (aGridItem->mPosY >= 500.0f)
+			if (aGridItem->mPosY >= BOARD_HEIGHT - 100)
 			{
 				aGridItem->GridItemDie();
 			}
@@ -4243,6 +4260,7 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType)
 	case SEED_ZOMBONI:				return ZOMBIE_ZAMBONI;
 	case SEED_ZOMBIE_POGO:			return ZOMBIE_POGO;
 	case SEED_ZOMBIE_DANCER:		return ZOMBIE_DANCER;
+	case SEED_ZOMBIE_JACKSON:		return ZOMBIE_JACKSON;
 	case SEED_ZOMBIE_GARGANTUAR:	return ZOMBIE_GARGANTUAR;
 	case SEED_ZOMBIE_IMP:			return ZOMBIE_IMP;
 	default:						TOD_ASSERT();
@@ -4692,6 +4710,7 @@ bool Challenge::IsZombieSeedType(SeedType theSeedType)
 		theSeedType == SEED_ZOMBONI ||
 		theSeedType == SEED_ZOMBIE_POGO ||
 		theSeedType == SEED_ZOMBIE_DANCER ||
+		theSeedType == SEED_ZOMBIE_JACKSON ||
 		theSeedType == SEED_ZOMBIE_GARGANTUAR ||
 		theSeedType == SEED_ZOMBIE_IMP;
 }
@@ -5072,12 +5091,12 @@ void Challenge::LastStandUpdate()
 
 		if (mSurvivalStage == 0)
 		{
-			aButton->SetLabel("[START_ONSLAUGHT]");
+			aButton->mLabel = _S("[START_ONSLAUGHT]");
 			aButton->Resize(300 + BOARD_ADDITIONAL_WIDTH, BOARD_HEIGHT - 41, 210, 46);
 		}
 		else
 		{
-			aButton->SetLabel("[CONTINUE_ONSLAUGHT]");
+			aButton->mLabel = _S("[CONTINUE_ONSLAUGHT]");
 			aButton->Resize(270 + BOARD_ADDITIONAL_WIDTH, BOARD_HEIGHT - 41, 257, 46);
 		}
 	}
@@ -5149,7 +5168,7 @@ void Challenge::TreeOfWisdomDraw(Graphics* g)
 	aReanimTree->mEnableExtraOverlayDraw = false;
 	aReanimTree->OverrideScale(1.25f, 1.25f);
 	aReanimTree->SetPosition(BOARD_ADDITIONAL_WIDTH / 2, 0);
-	aReanimTree->DrawRenderGroup(g, 1); 
+	aReanimTree->DrawRenderGroup(g, 1);
 	for (int i = 0; i < 6; i++)
 	{
 		Reanimation* aReanimCloud = mApp->ReanimationGet(mReanimClouds[i]);
@@ -5201,7 +5220,7 @@ void Challenge::TreeOfWisdomDraw(Graphics* g)
 			aPosX = 390;
 			aPosY = 40;
 		}
-		aPosX += BOARD_ADDITIONAL_WIDTH;
+		aPosX += BOARD_ADDITIONAL_WIDTH;  
 		aPosY += BOARD_OFFSET_Y;
 		g->DrawImage(Sexy::IMAGE_STORE_SPEECHBUBBLE2, aPosX, aPosY);
 		SexyString aText = StrFormat(_S("[TREE_OF_WISDOM_%d]"), mTreeOfWisdomTalkIndex);
@@ -5225,7 +5244,7 @@ void Challenge::TreeOfWisdomDraw(Graphics* g)
 		float aStrHeight = Sexy::FONT_HOUSEOFTERROR16->mAscent * aScale;
 
 		SexyTransform2D aMatrix;
-		TodScaleTransformMatrix(aMatrix, 400.0f - aStrWidth * 0.5f + BOARD_OFFSET_X - 30, 20.0f + aStrHeight * 0.5f, aScale, aScale);
+		TodScaleTransformMatrix(aMatrix, 400.0f - aStrWidth * 0.5f + BOARD_ADDITIONAL_WIDTH - 15, 20.0f + aStrHeight * 0.5f, aScale, aScale);
 		TodDrawStringMatrix(g, Sexy::FONT_HOUSEOFTERROR16, aMatrix, aSizeStr, Color(255, 255, 255));
 	}
 }
@@ -5298,10 +5317,8 @@ void Challenge::TreeOfWisdomGrow()
 		mChallengeState = STATECHALLENGE_NORMAL;
 	}
 
-	if (TreeOfWisdomGetSize() == 100)
-	{
+	if (aTreeSize == 100)
 		mApp->GetAchievement(ACHIEVEMENT_TOWERING_WISDOM);
-	}
 }
 
 void Challenge::TreeOfWisdomFertilize()
@@ -5493,7 +5510,7 @@ void Challenge::TreeOfWisdomOpenStore()
 {
 	TreeOfWisdomLeave();
 	StoreScreen* aStore = mApp->ShowStoreScreen();
-	aStore->mBackButton->SetLabel(_S("[STORE_BACK_TO_GAME]"));
+	aStore->mBackButton->mLabel = _S("[STORE_BACK_TO_GAME]");
 	aStore->mPage = STORE_PAGE_ZEN2;
 	aStore->WaitForResult(true);
 	mApp->mMusic->MakeSureMusicIsPlaying(MUSIC_TUNE_ZEN_GARDEN);
@@ -5513,12 +5530,11 @@ bool Challenge::TreeOfWisdomHitTest(int theX, int theY, HitResult* theHitResult)
 {
 	Rect aTreeRect;
 	int aTreeSize = TreeOfWisdomGetSize();
-	int aOffsetX = BOARD_ADDITIONAL_WIDTH;
 	int aOffsetY = BOARD_OFFSET_Y * 2;
-	if (aTreeSize <= 1)			aTreeRect = Rect(310, 275 - aOffsetY, 175 + aOffsetX, 175 + aOffsetY);
-	else if (aTreeSize < 7)		aTreeRect = Rect(290, 255 - aOffsetY, 205 + aOffsetX, 195 + aOffsetY);
-	else if (aTreeSize < 12)	aTreeRect = Rect(290, 215 - aOffsetY, 205 + aOffsetX, 225 + aOffsetY);
-	else						aTreeRect = Rect(280, 155 - aOffsetY, 225 + aOffsetX, 305 + aOffsetY);
+	if (aTreeSize <= 1)			aTreeRect = Rect(310 + BOARD_ADDITIONAL_WIDTH, 275 - aOffsetY, 175, 175 + aOffsetY);
+	else if (aTreeSize < 7)		aTreeRect = Rect(290 + BOARD_ADDITIONAL_WIDTH, 255 - aOffsetY, 205, 195 + aOffsetY);
+	else if (aTreeSize < 12)	aTreeRect = Rect(290 + BOARD_ADDITIONAL_WIDTH, 215 - aOffsetY, 205, 225 + aOffsetY);
+	else						aTreeRect = Rect(280 + BOARD_ADDITIONAL_WIDTH, 155 - aOffsetY, 225, 305 + aOffsetY);
 
 	if (aTreeRect.Contains(theX, theY))
 	{

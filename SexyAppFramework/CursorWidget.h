@@ -1,29 +1,27 @@
 #ifndef __CURSORWIDGET_H__
 #define __CURSORWIDGET_H__
 
-#include "../../SexyAppFramework/Widget.h"
-#include "../../SexyAppFramework/SexyAppBase.h"
-#include "../../SexyAppFramework/WidgetManager.h"
+#include "Widget.h"
+#include "Point.h"
 
 namespace Sexy
 {
 
-	class Image;
+class Image;
 
-	class CursorWidget : public Widget
-	{
-	public:
-		SexyAppBase* mApp;
-		Image* mImage;
-		bool					mDraw;
+class CursorWidget : public Widget
+{
+public:
+	Image*					mImage;
 
-	public:
-		CursorWidget(SexyAppBase* theApp);
+public:
+	CursorWidget();
 
-		virtual void			Draw(Graphics* g);
-		void					SetImage(Image* theImage);
-		void					Update();
-	};
+	virtual void			Draw(Graphics* g);
+	void					SetImage(Image* theImage);
+	Point					GetHotspot();
+	
+};
 
 }
 

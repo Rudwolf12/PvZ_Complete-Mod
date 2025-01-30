@@ -436,7 +436,7 @@ void Coin::ScoreCoin()
             mBoard->mCoinsCollected += aCoinValue;
             mBoard->mAchievementCoinCount++;
 
-            if (mBoard->mAchievementCoinCount >= 30 && !mBoard->mCoinFaded && !mApp->mPlayedQuickplay) {
+            if (mBoard->mAchievementCoinCount >= 30 && !mBoard->mCoinFaded && !mApp->mPlayingQuickplay) {
                 mApp->GetAchievement(ACHIEVEMENT_PENNY_PINCHER);
             }
         }
@@ -602,7 +602,6 @@ void Coin::UpdateCollected()
     {
         int aMoneyX;
         int aMoneyY = -10;
-
         if (mApp->GetDialog(Dialogs::DIALOG_STORE))
         {
             aMoneyX = 12;
@@ -619,7 +618,7 @@ void Coin::UpdateCollected()
     else if (IsPresentWithAdvice())
     {
         aDestX = 35 + BOARD_ADDITIONAL_WIDTH;
-        aDestY = 487;
+        aDestY = BOARD_HEIGHT - 113;
     }
     else if(mType == CoinType::COIN_AWARD_PRESENT || mType == CoinType::COIN_PRESENT_PLANT)
     {

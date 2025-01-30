@@ -42,12 +42,12 @@ public:
     float                       mLockShakeY;                                
     float						mScrollPosition;
     float						mScrollAmount;
-    const float					mBaseScrollSpeed = 1.0f;
+    const float					mBaseScrollSpeed = 1.5f;
     const float					mScrollAccel = 0.1f;
     float						mMaxScrollPosition;
     Sexy::Slider*               mSlider;
+    int                         mButtonYStartOffset;
     int                         mButtonYOffset;
-    int                         mButtonStartYOffset;
 
 public:
     ChallengeScreen(LawnApp* theApp, ChallengePage thePage);
@@ -84,6 +84,7 @@ public:
     int                         mRow;
     int                         mCol;
     const SexyChar*             mChallengeName;
+    bool                        mHasTrophy;
 };
 extern ChallengeDefinition gChallengeDefs[NUM_CHALLENGE_MODES];
 

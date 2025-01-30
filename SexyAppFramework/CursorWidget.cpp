@@ -1,18 +1,17 @@
 #include "CursorWidget.h"
+#include "Image.h"
 
 using namespace Sexy;
 
-CursorWidget::CursorWidget(SexyAppBase* theApp)
+CursorWidget::CursorWidget()
 {
-	mApp = theApp;
-	mMouseVisible = false;
 	mImage = NULL;
-	mDraw = false;
+	mMouseVisible = false;	
 }
 
 void CursorWidget::Draw(Graphics* g)
 {
-	if (mImage != NULL && mDraw)
+	if (mImage != NULL)
 		g->DrawImage(mImage, 0, 0);
 }
 
@@ -23,9 +22,9 @@ void CursorWidget::SetImage(Image* theImage)
 		Resize(mX, mY, theImage->mWidth, theImage->mHeight);
 }
 
-void CursorWidget::Update()
+Point CursorWidget::GetHotspot()
 {
-	mX = mApp->mWidgetManager->mLastMouseX - 30;
-	mY = mApp->mWidgetManager->mLastMouseY - 25;
-	mDraw = mApp->mCursorNum != CURSOR_NONE;
+	if (mImage == NULL)
+		return Point(0, 0);
+	return Point(mImage->GetWidth()/2, mImage->GetHeight()/2);
 }

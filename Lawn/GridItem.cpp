@@ -87,7 +87,7 @@ void GridItem::DrawGridItem(Graphics* g)
         if (aGridItemReanim)
         {
             aGridItemReanim->Draw(g);
-        }
+        }                                
         break;
     }
 

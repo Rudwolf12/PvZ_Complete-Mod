@@ -26,51 +26,51 @@
 #include "../SexyAppFramework/PerfTimer.h"
 #include "../SexyAppFramework/WidgetManager.h"
 
-static const int	TimePanRightStart = 1500;
-static const int	TimePanRightEnd = 3500;
-static const int	TimeEarlyDaveEnterStart = 2000;
-static const int	TimeEarlyDaveEnterEnd = 2750;
-static const int	TimeEarlyDaveLeaveStart = 3250;
-static const int	TimeEarlyDaveLeaveEnd = 4000;
-static const int	TimeSeedChoserSlideOnStart = 4000;
-static const int	TimeSeedChoserSlideOnEnd = 4250;
-static const int	TimeSeedChoserSlideOffStart = 4500;
-static const int	TimeSeedChoserSlideOffEnd = 4750;
-static const int	TimeSeedBankOnStart = 4000;
-static const int	TimeSeedBankOnEnd = 4250;
-static const int	TimePanLeftStart = 4500;
-static const int	TimePanLeftEnd = 6000;
-static const int	TimeSeedBankRightStart = 4750;
-static const int	TimeSeedBankRightEnd = 6000;
-static const int	TimeRollSodStart = 6000;
-static const int	TimeRollSodEnd = 8000;
-static const int	TimeGraveStoneStart = 6000;
-static const int	TimeGraveStoneEnd = 7000;
-static const int	TimeReadySetPlantStart = 6000;
-static const int	TimeReadySetPlantEnd = 7830;
-static const int	TimeFogRollIn = 5950;
-static const int	TimeCrazyDaveEnterStart = 6500;
-static const int	TimeCrazyDaveEnterEnd = 7250;
-static const int	TimeCrazyDaveLeaveStart = 7750;
-static const int	TimeCrazyDaveLeaveEnd = 8500;
-static const int	TimeIntroEnd = 6000;
-static const int	LostTimePanRightStart = 1500;
-static const int	LostTimePanRightEnd = 3500;
-static const int	LostTimeBrainGraphicStart = 6000;
-static const int	LostTimeBrainGraphicShake = 7000;
-static const int	LostTimeBrainGraphicCancelShake = 8000;
-static const int	LostTimeBrainGraphicEnd = 11000;
-static const int	LostTimeEnd = 11000;
-static const int	TimeIntro_PresentsFadeIn = 1000;
-static const int	TimeIntro_LogoStart = 5500;
-static const int	TimeIntro_LogoEnd = 5900;
-static const int	TimeIntro_PanRightStart = 5890;
-static const int	TimeIntro_PanRightEnd = 11890;
-static const int	TimeIntro_FadeOut = 10890;
-static const int	TimeIntro_FadeOutEnd = 11890;
-static const int	TimeIntro_End = 13890;
-static const int	TimeLawnMowerDuration = 250;
-static const int	TimeLawnMowerStart[6] = { 6300, 6250, 6200, 6150, 6100, 6050 };
+static const int	TimePanRightStart				= 1500;
+static const int	TimePanRightEnd					= 3500;		
+static const int	TimeEarlyDaveEnterStart			= 2000;		
+static const int	TimeEarlyDaveEnterEnd			= 2750;		
+static const int	TimeEarlyDaveLeaveStart			= 3250;		
+static const int	TimeEarlyDaveLeaveEnd			= 4000;		
+static const int	TimeSeedChoserSlideOnStart		= 4000;		
+static const int	TimeSeedChoserSlideOnEnd		= 4250;		
+static const int	TimeSeedChoserSlideOffStart		= 4500;		
+static const int	TimeSeedChoserSlideOffEnd		= 4750;		
+static const int	TimeSeedBankOnStart				= 4000;		
+static const int	TimeSeedBankOnEnd				= 4250;		
+static const int	TimePanLeftStart				= 4500;		
+static const int	TimePanLeftEnd					= 6000;		
+static const int	TimeSeedBankRightStart			= 4750;		
+static const int	TimeSeedBankRightEnd			= 6000;		
+static const int	TimeRollSodStart				= 6000;		
+static const int	TimeRollSodEnd					= 8000;		
+static const int	TimeGraveStoneStart				= 6000;		
+static const int	TimeGraveStoneEnd				= 7000;		
+static const int	TimeReadySetPlantStart			= 6000;		
+static const int	TimeReadySetPlantEnd			= 7830;		
+static const int	TimeFogRollIn					= 5950;		
+static const int	TimeCrazyDaveEnterStart			= 6500;		
+static const int	TimeCrazyDaveEnterEnd			= 7250;		
+static const int	TimeCrazyDaveLeaveStart			= 7750;		
+static const int	TimeCrazyDaveLeaveEnd			= 8500;		
+static const int	TimeIntroEnd					= 6000;		
+static const int	LostTimePanRightStart			= 1500;
+static const int	LostTimePanRightEnd				= 3500;		
+static const int	LostTimeBrainGraphicStart		= 6000;		
+static const int	LostTimeBrainGraphicShake		= 7000;		
+static const int	LostTimeBrainGraphicCancelShake	= 8000;		
+static const int	LostTimeBrainGraphicEnd			= 11000;	
+static const int	LostTimeEnd						= 11000;	
+static const int	TimeIntro_PresentsFadeIn		= 1000;
+static const int	TimeIntro_LogoStart				= 5500;		
+static const int	TimeIntro_LogoEnd				= 5900;		
+static const int	TimeIntro_PanRightStart			= 5890;		
+static const int	TimeIntro_PanRightEnd			= 11890;	
+static const int	TimeIntro_FadeOut				= 10890;	
+static const int	TimeIntro_FadeOutEnd			= 11890;	
+static const int	TimeIntro_End					= 13890;	
+static const int	TimeLawnMowerDuration			= 250;
+static const int	TimeLawnMowerStart[6]			= { 6300, 6250, 6200, 6150, 6100, 6050 };	
 
 CutScene::CutScene()
 {
@@ -131,7 +131,7 @@ void CutScene::PlaceAZombie(ZombieType theZombieType, int theGridX, int theGridY
 		//aZombie->ReanimShowTrack("Zombie_duckytube", 0);
 		mApp->ReanimationGet(aZombie->mBodyReanimID)->AssignRenderGroupToTrack("Zombie_duckytube", RENDER_GROUP_NORMAL);
 	}
-	if (mBoard->StageHasRoof())
+	if (aStageHasRoof)
 	{
 		aZombie->mPosY -= theGridY * 2 - theGridX * 7 + STREET_ZOMBIE_ROOF_OFFSET;  //7 * (5 - theGridX) - 2 * (5 - theGridY) + 5;
 		aZombie->mPosX -= 5.0f;
@@ -441,7 +441,7 @@ void CutScene::PreloadResources()
 		Plant::PreloadPlantResources(SeedType::SEED_SUNFLOWER);
 		Plant::PreloadPlantResources(SeedType::SEED_PEASHOOTER);
 		Plant::PreloadPlantResources(SeedType::SEED_SUNSHROOM);
-		Plant::PreloadPlantResources(SeedType::SEED_SUNSHROOM);
+		Plant::PreloadPlantResources(SeedType::SEED_SUNSHROOM);  
 		Plant::PreloadPlantResources(SeedType::SEED_FLOWERPOT);
 		Plant::PreloadPlantResources(SeedType::SEED_PLANTERN);
 		Plant::PreloadPlantResources(SeedType::SEED_FUMESHROOM);
@@ -525,7 +525,7 @@ void CutScene::PlaceStreetZombies()
 			++aTotalZombieCount;
 			if (aZombieType == ZombieType::ZOMBIE_BUNGEE || aZombieType == ZombieType::ZOMBIE_BOBSLED)
 			{
-				aZombieTypeCount[aZombieType] = 1;
+				aZombieTypeCount[aZombieType] = 1;  
 			}
 		}
 	}
@@ -542,7 +542,7 @@ void CutScene::PlaceStreetZombies()
 	}
 	if (mBoard->StageHasPool())
 	{
-		aZombieTypeCount[(int)ZombieType::ZOMBIE_DUCKY_TUBE] = 1;
+		aZombieTypeCount[(int)ZombieType::ZOMBIE_DUCKY_TUBE] = 1;  
 	}
 	bool aZombieGrid[5][5] = { false };
 	int aPreviewCapacity = 10;
@@ -621,7 +621,7 @@ bool CutScene::IsNonScrollingCutscene()
 bool CutScene::IsScrolledLeftAtStart()
 {
 	if (mBoard->mChallenge->mSurvivalStage > 0 && mApp->IsSurvivalMode())
-		return false;
+		return false;  
 
 	return !IsNonScrollingCutscene();
 }
@@ -651,7 +651,7 @@ bool CutScene::CanGetPacketUpgrade(int theUpgradeIndex)
 	int aCost = StoreScreen::GetItemCost(StoreItem::STORE_ITEM_PACKET_UPGRADE);
 
 	return
-		mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_PACKET_UPGRADE] == theUpgradeIndex &&
+		mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_PACKET_UPGRADE] == theUpgradeIndex &&  
 		mApp->mPlayerInfo->mCoins >= aCost &&
 		mApp->mPlayerInfo->mDidntPurchasePacketUpgrade < 2;
 }
@@ -663,7 +663,7 @@ void CutScene::StartLevelIntro()
 	mBoard->mMenuButton->mBtnNoDraw = true;
 	mBoard->mFastButton->mBtnNoDraw = true;
 	mApp->mSeedChooserScreen->mMouseVisible = false;
-	mApp->mSeedChooserScreen->Move(BOARD_ADDITIONAL_WIDTH, SEED_CHOOSER_OFFSET_Y);
+	mApp->mSeedChooserScreen->Move(0, SEED_CHOOSER_OFFSET_Y);
 	mApp->mSeedChooserScreen->mMenuButton->mBtnNoDraw = true;
 	mBoard->mShowShovel = false;
 	mBoard->mSeedBank->mCutSceneDarken = 255;
@@ -792,7 +792,7 @@ void CutScene::StartLevelIntro()
 	{
 		mCrazyDaveDialogStart = mApp->IsFirstTimeAdventureMode() ? 1301 : 1304;
 	}
-	else if (!mApp->IsFirstTimeAdventureMode() && aLevel == 1 && (!mApp->mPlayedQuickplay || (mApp->mPlayedQuickplay && mApp->mCrazySeeds)))
+	else if (!mApp->IsFirstTimeAdventureMode() && aLevel == 1 && (!mApp->mPlayingQuickplay || (mApp->mPlayingQuickplay && mApp->mCrazySeeds)))
 	{
 		mCrazyDaveDialogStart = 1601;
 	}
@@ -953,7 +953,7 @@ void CutScene::CancelIntro()
 		}
 		if (!mApp->IsChallengeWithoutSeedBank())
 		{
-			mBoard->mSeedBank->Move(SEED_BANK_OFFSET_X_END, SEED_BANK_OFFSET);
+			mBoard->mSeedBank->Move(SEED_BANK_OFFSET_X_END, 0);
 		}
 
 		if (mCrazyDaveDialogStart != -1)
@@ -1121,15 +1121,15 @@ void CutScene::AnimateBoard()
 		SeedChooserScreen* aSeedChoser = mApp->mSeedChooserScreen;
 		if (mCutsceneTime > aTimeSeedChoserSlideOnStart && mCutsceneTime <= aTimeSeedChoserSlideOnEnd)
 		{
-			aSeedChoser->Move(BOARD_ADDITIONAL_WIDTH, CalcPosition(aTimeSeedChoserSlideOnStart, aTimeSeedChoserSlideOnEnd, SEED_CHOOSER_OFFSET_Y, BOARD_OFFSET_Y));
-			aSeedChoser->mMenuButton->mY = CalcPosition(aTimeSeedChoserSlideOnStart, aTimeSeedChoserSlideOnEnd, -50, 0);
+			aSeedChoser->Move(0, CalcPosition(aTimeSeedChoserSlideOnStart, aTimeSeedChoserSlideOnEnd, SEED_CHOOSER_OFFSET_Y, 0));
+			aSeedChoser->mMenuButton->mY = CalcPosition(aTimeSeedChoserSlideOnStart, aTimeSeedChoserSlideOnEnd, -50, -10);
 			aSeedChoser->mMenuButton->mBtnNoDraw = false;
 		}
 		int aTimeSeedChoserSlideOffStart = TimeSeedChoserSlideOffStart + mCrazyDaveTime;
 		int aTimeSeedChoserSlideOffEnd = TimeSeedChoserSlideOffEnd + mCrazyDaveTime;
 		if (mCutsceneTime > aTimeSeedChoserSlideOffStart && mCutsceneTime <= aTimeSeedChoserSlideOffEnd)
 		{
-			aSeedChoser->Move(BOARD_ADDITIONAL_WIDTH, CalcPosition(aTimeSeedChoserSlideOffStart, aTimeSeedChoserSlideOffEnd, BOARD_OFFSET_Y, SEED_CHOOSER_OFFSET_Y));
+			aSeedChoser->Move(0, CalcPosition(aTimeSeedChoserSlideOffStart, aTimeSeedChoserSlideOffEnd, 0, SEED_CHOOSER_OFFSET_Y));
 			aSeedChoser->mMenuButton->mDisabled = true;
 		}
 	}
@@ -1137,8 +1137,8 @@ void CutScene::AnimateBoard()
 	if (mCutsceneTime > aTimePanLeftStart)
 	{
 		int aPanOffset = CalcPosition(aTimePanLeftStart, aTimePanLeftEnd, aStreetOffset, 0);
-		mBoard->mRoofPoleOffset = CalcPosition(aTimePanLeftStart, aTimePanLeftEnd, -BOARD_WIDTH, WIDE_BOARD_WIDTH + 70 - BOARD_ADDITIONAL_WIDTH);
-		mBoard->mRoofTreeOffset = CalcPosition(aTimePanLeftStart, aTimePanLeftEnd, -670, WIDE_BOARD_WIDTH + 130 - BOARD_ADDITIONAL_WIDTH);
+		mBoard->mRoofPoleOffset = CalcPosition(aTimePanLeftStart, aTimePanLeftEnd, ROOF_POLE_END, ROOF_POLE_START);
+		mBoard->mRoofTreeOffset = CalcPosition(aTimePanLeftStart, aTimePanLeftEnd, ROOF_TREE_END, ROOF_TREE_START);
 		mBoard->Move(-aPanOffset, 0);
 	}
 
@@ -1151,7 +1151,7 @@ void CutScene::AnimateBoard()
 	int aTimeSeedBankOnEnd = TimeSeedBankOnEnd + aTimePrepareEnd + mCrazyDaveTime;
 	if (!mApp->IsChallengeWithoutSeedBank() && mCutsceneTime > aTimeSeedBankOnStart && mCutsceneTime <= aTimeSeedBankOnEnd)
 	{
-		int aSeedBankY = CalcPosition(aTimeSeedBankOnStart, aTimeSeedBankOnEnd, -IMAGE_SEEDBANK->GetHeight(), SEED_BANK_OFFSET);
+		int aSeedBankY = CalcPosition(aTimeSeedBankOnStart, aTimeSeedBankOnEnd, -IMAGE_SEEDBANK->GetHeight(), 0);
 		mBoard->mSeedBank->Move(SEED_BANK_OFFSET_X, aSeedBankY);
 	}
 	int aTimeSeedBankRightStart = TimeSeedBankRightStart + mCrazyDaveTime;
@@ -1175,22 +1175,22 @@ void CutScene::AnimateBoard()
 			mApp->PlayFoley(FoleyType::FOLEY_DIGGER);
 			if (mBoard->mLevel == 1)
 			{
-				mApp->AddReanimation(0 + BOARD_ADDITIONAL_WIDTH, 0 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ReanimationType::REANIM_SODROLL);
-				mApp->AddTodParticle(35 + BOARD_ADDITIONAL_WIDTH, 348 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
+				mApp->AddReanimation(0 + BOARD_ADDITIONAL_WIDTH, 0 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 0), ReanimationType::REANIM_SODROLL);
+				mApp->AddTodParticle(35 + BOARD_ADDITIONAL_WIDTH, 348 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
 			}
 			else if (mBoard->mLevel == 2)
 			{
-				mApp->AddReanimation(0 + BOARD_ADDITIONAL_WIDTH, -102 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ReanimationType::REANIM_SODROLL);
-				mApp->AddReanimation(0 + BOARD_ADDITIONAL_WIDTH, 111 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ReanimationType::REANIM_SODROLL);
-				mApp->AddTodParticle(35 + BOARD_ADDITIONAL_WIDTH, 246 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
-				mApp->AddTodParticle(35 + BOARD_ADDITIONAL_WIDTH, 459 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
+				mApp->AddReanimation(0 + BOARD_ADDITIONAL_WIDTH, -102 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 0), ReanimationType::REANIM_SODROLL);
+				mApp->AddReanimation(0 + BOARD_ADDITIONAL_WIDTH, 111 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 0), ReanimationType::REANIM_SODROLL);
+				mApp->AddTodParticle(35 + BOARD_ADDITIONAL_WIDTH, 246 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
+				mApp->AddTodParticle(35 + BOARD_ADDITIONAL_WIDTH, 459 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
 			}
 			else if (mBoard->mLevel == 4)
 			{
-				mApp->AddReanimation(-3 + BOARD_ADDITIONAL_WIDTH, -198 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ReanimationType::REANIM_SODROLL);
-				mApp->AddReanimation(-3 + BOARD_ADDITIONAL_WIDTH, 203 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ReanimationType::REANIM_SODROLL);
-				mApp->AddTodParticle(32 + BOARD_ADDITIONAL_WIDTH, 150 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
-				mApp->AddTodParticle(32 + BOARD_ADDITIONAL_WIDTH, 511 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
+				mApp->AddReanimation(-3 + BOARD_ADDITIONAL_WIDTH, -198 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 0), ReanimationType::REANIM_SODROLL);
+				mApp->AddReanimation(-3 + BOARD_ADDITIONAL_WIDTH, 203 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 0), ReanimationType::REANIM_SODROLL);
+				mApp->AddTodParticle(32 + BOARD_ADDITIONAL_WIDTH, 150 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
+				mApp->AddTodParticle(32 + BOARD_ADDITIONAL_WIDTH, 511 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_ZOMBIE, 0, 1), ParticleEffect::PARTICLE_SOD_ROLL);
 			}
 		}
 
@@ -1250,7 +1250,7 @@ void CutScene::AnimateBoard()
 		mBoard->mChallenge->mChallengeState = ChallengeState::STATECHALLENGE_STORM_FLASH_2;
 		mBoard->mChallenge->mChallengeStateCounter = 310;
 	}
-
+	
 	if (mBossTime > 0)
 	{
 		int aTimeBossEnter = TimeReadySetPlantStart + mLawnMowerTime + mCrazyDaveTime;
@@ -1404,13 +1404,8 @@ void CutScene::Update()
 		{
 			mBoard->mMenuButton->mBtnNoDraw = false;
 		}
-
 		ShowShovel();
 		mApp->StartPlaying();
-		if (!mApp->IsChallengeWithoutSeedBank() && mApp->mBoard->HasConveyorBeltSeedBank())
-		{
-			mBoard->mSeedBank->Move(SEED_BANK_OFFSET_X_END, SEED_BANK_OFFSET);
-		}
 		if (mBoard->mFastButton && mApp->mGameMode != GAMEMODE_CHALLENGE_ZEN_GARDEN && mApp->mGameMode != GAMEMODE_TREE_OF_WISDOM)
 		{
 			mBoard->mFastButton->mBtnNoDraw = false;
@@ -1637,7 +1632,7 @@ void CutScene::KeyDown(KeyCode theKey)
 	{
 		if (mApp->mTodCheatKeys && theKey == KeyCode::KEYCODE_ESCAPE)
 		{
-			mCrazyDaveLastTalkIndex = 3316;
+			mCrazyDaveLastTalkIndex = 3316; 
 			mCrazyDaveCountDown = 1;
 		}
 		else if (theKey == KeyCode::KEYCODE_SPACE || theKey == KeyCode::KEYCODE_RETURN || theKey == KeyCode::KEYCODE_ESCAPE)
@@ -1726,8 +1721,9 @@ void CutScene::ClearUpsellBoard()
 	Reanimation* aReanim = nullptr;
 	while (mBoard->IterateReanimations(aReanim))
 	{
-		if (aReanim->mReanimationType != ReanimationType::REANIM_CRAZY_DAVE)
-			aReanim->ReanimationDie();
+		if (aReanim->mReanimationType == ReanimationType::REANIM_CRAZY_DAVE)
+			continue;
+		aReanim->ReanimationDie();
 	}
 	mBoard->mPoolSparklyParticleID = ParticleSystemID::PARTICLESYSTEMID_NULL;
 
@@ -1780,26 +1776,28 @@ void CutScene::LoadIntroBoard()
 	mBoard->NewPlant(6, 0, SeedType::SEED_SPIKEWEED, SeedType::SEED_NONE);
 	mBoard->NewPlant(6, 4, SeedType::SEED_SPIKEWEED, SeedType::SEED_NONE);
 	mBoard->NewPlant(7, 1, SeedType::SEED_SPIKEWEED, SeedType::SEED_NONE);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_FOOTBALL, 680, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 730, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 810, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 880, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 500, 2);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 680, 2);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 604, 3);
-	AddUpsellZombie(ZombieType::ZOMBIE_SNORKEL, 880, 3);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 600, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 690, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 780, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_CATAPULT, 730, 5);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 590, 5);
-	for (int i = 0; i < 6; i++) {
-		mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_FOOTBALL, 680 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 730 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 810 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 880 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 500 + BOARD_ADDITIONAL_WIDTH, 2);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 680 + BOARD_ADDITIONAL_WIDTH, 2);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 604 + BOARD_ADDITIONAL_WIDTH, 3);
+	AddUpsellZombie(ZombieType::ZOMBIE_SNORKEL, 880 + BOARD_ADDITIONAL_WIDTH, 3);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 600 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 690 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 780 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_CATAPULT, 730 + BOARD_ADDITIONAL_WIDTH, 5);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 590 + BOARD_ADDITIONAL_WIDTH, 5);
+	if (mBoard->StageHasBushes())
+	{
+		for (int i = 0; i < MAX_GRID_SIZE_Y; i++)
+			mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+		mBoard->AddBushes();
 	}
-	mBoard->AddBushes();
 
 	mPreUpdatingBoard = true;
 	for (int i = 0; i < 100; i++)
@@ -1844,21 +1842,23 @@ void CutScene::LoadUpsellBoardPool()
 	mBoard->NewPlant(6, 4, SeedType::SEED_SPIKEWEED, SeedType::SEED_NONE);
 	mBoard->NewPlant(6, 5, SeedType::SEED_SQUASH, SeedType::SEED_NONE);
 	mBoard->NewPlant(7, 1, SeedType::SEED_SPIKEWEED, SeedType::SEED_NONE);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_ZAMBONI, 680, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 500, 2);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 680, 2);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 604, 3);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 690, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 730, 5);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 590, 5);
-	for (int i = 0; i < 6; i++) {
-		mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_ZAMBONI, 680 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 500 + BOARD_ADDITIONAL_WIDTH, 2);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 680 + BOARD_ADDITIONAL_WIDTH, 2);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 604 + BOARD_ADDITIONAL_WIDTH, 3);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 690 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 730 + BOARD_ADDITIONAL_WIDTH, 5);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 590 + BOARD_ADDITIONAL_WIDTH, 5);
+	if (mBoard->StageHasBushes())
+	{
+		for (int i = 0; i < MAX_GRID_SIZE_Y; i++)
+			mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+		mBoard->AddBushes();
 	}
-	mBoard->AddBushes();
 
 	mPreUpdatingBoard = true;
 	for (int i = 0; i < 100; i++)
@@ -1903,21 +1903,23 @@ void CutScene::LoadUpsellBoardFog()
 	mBoard->NewPlant(5, 3, SeedType::SEED_SEASHROOM, SeedType::SEED_NONE);
 	mBoard->NewPlant(6, 2, SeedType::SEED_SEASHROOM, SeedType::SEED_NONE);
 	mBoard->NewPlant(6, 3, SeedType::SEED_SEASHROOM, SeedType::SEED_NONE);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 680, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_BALLOON, 780, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_BALLOON, 640, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 640, 2);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 780, 3);
-	AddUpsellZombie(ZombieType::ZOMBIE_BALLOON, 704, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 690, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 590, 5);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740, 5);
-	for (int i = 0; i < 6; i++) {
-		mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 680 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_BALLOON, 780 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_BALLOON, 640 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 640 + BOARD_ADDITIONAL_WIDTH, 2);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 780 + BOARD_ADDITIONAL_WIDTH, 3);
+	AddUpsellZombie(ZombieType::ZOMBIE_BALLOON, 704 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 690 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 590 + BOARD_ADDITIONAL_WIDTH, 5);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 740 + BOARD_ADDITIONAL_WIDTH, 5);
+	if (mBoard->StageHasBushes())
+	{
+		for (int i = 0; i < MAX_GRID_SIZE_Y; i++)
+			mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+		mBoard->AddBushes();
 	}
-	mBoard->AddBushes();
 
 	mPreUpdatingBoard = true;
 	for (int i = 0; i < 100; i++)
@@ -2013,19 +2015,25 @@ void CutScene::LoadUpsellBoardRoof()
 	mBoard->NewPlant(5, 3, SeedType::SEED_THREEPEATER, SeedType::SEED_NONE);
 	mBoard->NewPlant(5, 4, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE);
 	mBoard->NewPlant(5, 4, SeedType::SEED_WALLNUT, SeedType::SEED_NONE);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 680, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_CATAPULT, 780, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 580, 0);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 540, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 500, 1);
-	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 640, 2);
-	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 780, 3);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 380, 3);
-	AddUpsellZombie(ZombieType::ZOMBIE_CATAPULT, 704, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 690, 4);
-	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 590, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 460 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 680 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_CATAPULT, 780 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 670 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 580 + BOARD_ADDITIONAL_WIDTH, 0);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 540 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 500 + BOARD_ADDITIONAL_WIDTH, 1);
+	AddUpsellZombie(ZombieType::ZOMBIE_PAIL, 640 + BOARD_ADDITIONAL_WIDTH, 2);
+	AddUpsellZombie(ZombieType::ZOMBIE_TRAFFIC_CONE, 780 + BOARD_ADDITIONAL_WIDTH, 3);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 380 + BOARD_ADDITIONAL_WIDTH, 3);
+	AddUpsellZombie(ZombieType::ZOMBIE_CATAPULT, 704 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 690 + BOARD_ADDITIONAL_WIDTH, 4);
+	AddUpsellZombie(ZombieType::ZOMBIE_NORMAL, 590 + BOARD_ADDITIONAL_WIDTH, 4);
+	if (mBoard->StageHasBushes())
+	{
+		for (int i = 0; i < MAX_GRID_SIZE_Y; i++)
+			mBoard->mBushList[i] = mBoard->mBushes.DataArrayAlloc();
+		mBoard->AddBushes();
+	}
 
 	mPreUpdatingBoard = true;
 	for (int k = 0; k < 100; k++)
@@ -2091,7 +2099,7 @@ void CutScene::UpdateUpsell()
 	Reanimation* aCrazyDaveReanim = mApp->ReanimationTryToGet(mApp->mCrazyDaveReanimID);
 	switch (mCrazyDaveLastTalkIndex)
 	{
-	case 3305:
+	case 3305:  
 	{
 		Reanimation* aReanimSquash = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_SQUASH);
 		aReanimSquash->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
@@ -2102,7 +2110,7 @@ void CutScene::UpdateUpsell()
 		break;
 	}
 
-	case 3306:
+	case 3306:  
 	{
 		Reanimation* aReanimThreepeater = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_THREEPEATER);
 		aReanimThreepeater->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
@@ -2121,7 +2129,7 @@ void CutScene::UpdateUpsell()
 		break;
 	}
 
-	case 3307:
+	case 3307:  
 	{
 		Reanimation* aReanimMagnet = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_MAGNETSHROOM);
 		aReanimMagnet->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
@@ -2133,44 +2141,44 @@ void CutScene::UpdateUpsell()
 		break;
 	}
 
-	case 3309:
+	case 3309:  
 		aCrazyDaveReanim->FindSubReanim(ReanimationType::REANIM_THREEPEATER)->ReanimationDie();
 		aCrazyDaveReanim->FindSubReanim(ReanimationType::REANIM_MAGNETSHROOM)->ReanimationDie();
 		break;
 
-	case 3312:
+	case 3312:  
 		mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_MINIGAME_LOONBOON);
 		LoadUpsellBoardPool();
 		mApp->PlaySample(SOUND_FINALWAVE);
 		mUpsellHideBoard = false;
 		break;
 
-	case 3313:
+	case 3313:  
 		LoadUpsellBoardFog();
 		mApp->PlaySample(SOUND_HUGE_WAVE);
 		mUpsellHideBoard = false;
 		break;
 
-	case 3314:
+	case 3314:  
 		LoadUpsellChallengeScreen();
 		mApp->PlaySample(SOUND_FINALWAVE);
 		mUpsellHideBoard = false;
 		break;
 
-	case 3315:
+	case 3315:  
 		ClearUpsellBoard();
 		mApp->PlaySample(SOUND_FINALWAVE);
 		mUpsellHideBoard = true;
 		mApp->AddTodParticle(592 + BOARD_ADDITIONAL_WIDTH, 240 + BOARD_OFFSET_Y, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_SCREEN_FADE, 0, 0), ParticleEffect::PARTICLE_PERSENT_PICK_UP_ARROW);
 		break;
 
-	case 3316:
+	case 3316:  
 		LoadUpsellBoardRoof();
 		mApp->PlaySample(SOUND_HUGE_WAVE);
 		mUpsellHideBoard = false;
 		break;
 
-	case 3317:
+	case 3317:  
 		ClearUpsellBoard();
 		mBoard->mMenuButton->mBtnNoDraw = true;
 		mUpsellHideBoard = true;
@@ -2180,24 +2188,26 @@ void CutScene::UpdateUpsell()
 
 void CutScene::DrawUpsell(Graphics* g)
 {
-	if (mCrazyDaveLastTalkIndex == 3315)
+	if (mCrazyDaveLastTalkIndex == 3315)  
 	{
 		Reanimation aReanim;
 		aReanim.ReanimationInitializeType(565 + BOARD_ADDITIONAL_WIDTH, 360 + BOARD_OFFSET_Y, ReanimationType::REANIM_FLOWER_POT);
 		aReanim.SetFramesForLayer("anim_zengarden");
 		aReanim.OverrideScale(1.3f, 1.3f);
 		aReanim.Draw(g);
-		mBoard->mMenuButton->Draw(g);
 		aReanim.ReanimationDie();
 	}
 
 	if (mUpsellChallengeScreen)
 	{
-		if (!mUpsellChallengeScreen->mWidgetManager)
-			mUpsellChallengeScreen->mWidgetManager = mApp->mWidgetManager;
 		mUpsellChallengeScreen->Draw(g);
-		mBoard->mMenuButton->Draw(g);
+		g->ClearClipRect();
 	}
+
+	g->mTransX += BOARD_ADDITIONAL_WIDTH;
+	mApp->DrawCrazyDave(g);
+	g->mTransX -= BOARD_ADDITIONAL_WIDTH;
+	mBoard->mMenuButton->Draw(g);
 }
 
 void CutScene::UpdateIntro()

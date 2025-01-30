@@ -162,8 +162,6 @@ public:
     bool                            mIsFireBall;                                
     ReanimationID                   mMoweredReanimID;                           
     int                             mLastPortalX;                               
-    float                           mGameOverX;
-    float                           mGameOverY;
 
 public:
     Zombie();
@@ -394,20 +392,19 @@ public:
     void                            SetupReanimForLostHead();
     void                            SetupReanimForLostArm(unsigned int theDamageFlags);
     bool                            IsSquashTarget(Plant* theExcept);
-    bool                            UsesEnterenceClipRect();
     static /*inline*/ bool			IsZombotany(ZombieType theZombieType);
 };
 
 class ZombieDefinition
 {
 public:
-    ZombieType                      mZombieType; // zombie identifier ex: ZOMBIE_NORMAL
-    ReanimationType                 mReanimationType; //zombie reanim
-    int                             mZombieValue; // points used in waves (ACTUAL USE IS UNKNOWN)
-    int                             mStartingLevel; // the first level the zombie appears in
-    int                             mFirstAllowedWave; // first spawning wave its allowed to spawn, (WAVE IS NOT A EQUAL TO A FLAG, 10 waves = 1 flag)
-    int                             mPickWeight; // actual weight used in choosing if it can spawn the zombie
-    const SexyChar*                 mZombieName; // the name
+    ZombieType                      mZombieType;
+    ReanimationType                 mReanimationType;
+    int                             mZombieValue;
+    int                             mStartingLevel;
+    int                             mFirstAllowedWave;
+    int                             mPickWeight;
+    const SexyChar*                 mZombieName;
 };
 extern ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES];  
 

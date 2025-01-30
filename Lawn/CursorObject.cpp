@@ -20,7 +20,6 @@ CursorObject::CursorObject()
     mCobCannonPlantID = PlantID::PLANTID_NULL;
     mGlovePlantID = PlantID::PLANTID_NULL;
     mReanimCursorID = ReanimationID::REANIMATIONID_NULL;
-
     mWidth = 80;
     mHeight = 80;
 }

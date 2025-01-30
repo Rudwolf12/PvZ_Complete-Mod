@@ -10,6 +10,7 @@
 #include "CritSect.h"
 #include "SharedImage.h"
 #include "Ratio.h"
+#include "../Lawn/Widget/CursorWidget.h"
 
 namespace ImageLib
 {
@@ -314,12 +315,22 @@ namespace Sexy
 		int						mQuickLevel;
 		bool					mCrazySeeds;
 		bool					mIs3dAccel;
+		std::string				mLanguagePath;
+		std::string				mLanguage;
+		int						mLanguageIndex;
+		std::map<std::string, StringWStringMap> mLanguages;
+		std::string				mResourcePackPath;
+		std::string				mResourcePack;
+		int						mResourcePackIndex;
+		std::string				mResourcesPath;
+		bool					mCustomCursor;
 		bool					mSoftVSyncWait;
 		bool					mUserChanged3DSetting;
 		bool					mAutoEnable3D;
 		bool					mTest3D;
 		DWORD					mMinVidMemory3D;
 		DWORD					mRecommendedVidMemory3D;
+		CursorWidget*			mCursor;
 
 		bool					mWidescreenAware;
 		Rect					mScreenBounds;
@@ -452,7 +463,7 @@ namespace Sexy
 		int						GetCursor();
 		void					EnableCustomCursors(bool enabled);
 		virtual DDImage* GetImage(const std::string& theFileName, bool commitBits = true);
-		virtual SharedImageRef	GetSharedImage(const std::string& theFileName, const std::string& theVariant = "", bool* isNew = NULL);
+		virtual SharedImageRef	GetSharedImage(const std::string& theFileName, const std::string& theVariant = "", bool* isNew = NULL, bool theReplace = false);
 
 		void					CleanSharedImages();
 		void					PrecacheAdditive(MemoryImage* theImage);
@@ -584,6 +595,15 @@ namespace Sexy
 		virtual bool			AppCanRestore();
 		virtual void			ShowFPS(bool show);
 		static LRESULT CALLBACK	WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		
+		void					SwitchLanguage();
+		void					ReloadLanguages();
+		void					LoadCurrentLanguage();
+
+		void					SwitchResourcePack();
+		void					ReloadResourcePacks();
+		void					LoadCurrentResourcePack();
+		SexyString				GetResourcePackString();
 	};
 
 	extern SexyAppBase* gSexyAppBase;
